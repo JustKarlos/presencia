@@ -104,7 +104,7 @@ function ago(iso){
 function setStatus(txt, color){ $('statusTxt').textContent = txt; $('dot').style.background = color; }
 
 $('chan').textContent = CONFIG.CHANNEL_NAME;
-document.title = `Presença — ${CONFIG.CHANNEL_NAME}`;
+document.title = `Presentes — ${CONFIG.CHANNEL_NAME}`;
 
 /* ---------- Supabase ---------- */
 const db = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
