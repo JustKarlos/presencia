@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ranking de Presença</title>
+<title>Ranking de Presentes</title>
 <script src="https://cdn.tailwindcss.com/3.4.17"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pusher-js@8.4.0/dist/web/pusher.min.js"></script>
@@ -23,10 +23,10 @@
 <script>
 /* =================== CONFIG — edit these =================== */
 const CONFIG = {
-  SUPABASE_URL:      "https://YOUR-PROJECT.supabase.co",
-  SUPABASE_ANON_KEY: "YOUR-ANON-PUBLIC-KEY",
-  CHANNEL_NAME:      "seu_canal",     // shown in header
-  KICK_CHATROOM_ID:  "00000000",      // numeric chatroom id (see README steps)
+  SUPABASE_URL:      "https://nlgkpoomhgehuabrkwhp.supabase.co",
+  SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5sZ2twb29taGdlaHVhYnJrd2hwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE3NjE3NzAsImV4cCI6MjEwNzMzNzc3MH0.DM1cUzclLbu8ej8m7PAQEja6X20gBadNiuqMEzbk-_g",
+  CHANNEL_NAME:      "OptiMaquina",     // shown in header
+  KICK_CHATROOM_ID:  "48769923",      // numeric chatroom id (see README steps)
   // Kick's public Pusher credentials (taken from kick.com's web client; may change)
   PUSHER_KEY:        "32cbd69e4b950bf97679",
   PUSHER_CLUSTER:    "us2",
@@ -39,15 +39,15 @@ const CONFIG = {
 <header class="max-w-4xl mx-auto px-4 pt-8 pb-4">
   <div class="flex items-center justify-between gap-4 flex-wrap">
     <div>
-      <h1 class="text-3xl font-extrabold tracking-tight">Presença <span class="kick" id="chan"></span></h1>
-      <p class="text-sm text-zinc-400 mt-1">Digite <code class="kick">!presente</code> no chat a cada hora para somar pontos e manter sua sequência.</p>
+      <h1 class="text-3xl font-extrabold tracking-tight">Presente <span class="kick" id="chan"></span></h1>
+      <p class="text-sm text-zinc-400 mt-1">Digite <code class="kick">!presente</code> en el chat para sumar +1 presente.</p>
     </div>
     <div id="status" class="text-xs px-3 py-1.5 rounded-full panel flex items-center gap-2" role="status">
-      <span id="dot" class="w-2 h-2 rounded-full bg-zinc-500"></span><span id="statusTxt">Carregando…</span>
+      <span id="dot" class="w-2 h-2 rounded-full bg-zinc-500"></span><span id="statusTxt">Cargando…</span>
     </div>
   </div>
   <label class="block mt-6">
-    <span class="sr-only">Buscar usuário</span>
+    <span class="sr-only">Buscar usuario</span>
     <input id="search" type="search" placeholder="Buscar usuário…" autocomplete="off"
       class="w-full rounded-lg px-4 py-3 bg-[#14191a] border border-[#232b2d] placeholder-zinc-500 focus:border-[#53fc18] outline-none">
   </label>
@@ -59,15 +59,15 @@ const CONFIG = {
       <thead class="text-zinc-400 text-left">
         <tr class="border-b border-[#232b2d]">
           <th class="px-4 py-3 w-12">#</th>
-          <th class="px-4 py-3">Usuário</th>
-          <th class="px-4 py-3 text-right">Presenças</th>
+          <th class="px-4 py-3">Usuario</th>
+          <th class="px-4 py-3 text-right">Presentes</th>
           <th class="px-4 py-3 text-right">Sequência</th>
-          <th class="px-4 py-3 text-right">Última vez</th>
+          <th class="px-4 py-3 text-right">Ultima vez</th>
         </tr>
       </thead>
       <tbody id="board"></tbody>
     </table>
-    <p id="empty" class="hidden p-8 text-center text-zinc-400">Nenhum usuário encontrado.</p>
+    <p id="empty" class="hidden p-8 text-center text-zinc-400">Ningun usuario encontrado.</p>
   </div>
   <p id="liveNote" class="text-xs text-zinc-500 mt-3"></p>
 </main>
@@ -79,11 +79,11 @@ const CONFIG = {
     <h2 id="mName" class="text-2xl font-bold kick break-all"></h2>
     <p id="mRank" class="text-sm text-zinc-400 mb-4"></p>
     <dl class="grid grid-cols-3 gap-3 text-center">
-      <div class="rounded-lg bg-[#0b0e0f] p-3"><dt class="text-xs text-zinc-400">Presenças</dt><dd id="mTotal" class="text-2xl font-bold"></dd></div>
+      <div class="rounded-lg bg-[#0b0e0f] p-3"><dt class="text-xs text-zinc-400">Presentes</dt><dd id="mTotal" class="text-2xl font-bold"></dd></div>
       <div class="rounded-lg bg-[#0b0e0f] p-3"><dt class="text-xs text-zinc-400">Sequência</dt><dd id="mStreak" class="text-2xl font-bold"></dd></div>
-      <div class="rounded-lg bg-[#0b0e0f] p-3"><dt class="text-xs text-zinc-400">Recorde</dt><dd id="mBest" class="text-2xl font-bold"></dd></div>
+      <div class="rounded-lg bg-[#0b0e0f] p-3"><dt class="text-xs text-zinc-400">Record</dt><dd id="mBest" class="text-2xl font-bold"></dd></div>
     </dl>
-    <h3 class="mt-5 mb-2 text-sm text-zinc-400">Últimas presenças</h3>
+    <h3 class="mt-5 mb-2 text-sm text-zinc-400">Ultimas presentes</h3>
     <ul id="mHistory" class="text-sm space-y-1 max-h-40 overflow-y-auto"></ul>
   </div>
 </div>
@@ -218,11 +218,11 @@ function startKick(){
 /* ---------- boot ---------- */
 loadBoard();
 if(LISTEN){
-  $('liveNote').textContent = 'Modo escuta ativo: mantenha esta aba aberta para registrar presenças.';
+  $('liveNote').textContent = 'Modo escucha activo: mantenga esta para registrar presentes.';
   startKick();
 } else {
-  setStatus('Ranking ao vivo','#53fc18');
-  $('liveNote').textContent = 'Atualiza em tempo real.';
+  setStatus('Ranking en vivo','#53fc18');
+  $('liveNote').textContent = 'Actualiza en tiempo real.';
 }
 </script>
 </body>
