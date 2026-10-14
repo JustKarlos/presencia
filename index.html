@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ranking de Presença</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pusher-js@8.4.0/dist/web/pusher.min.js"></script>
+<style>
+  body{background:#0b0e0f;color:#e8ecea;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+  .kick{color:#53fc18}.bg-kick{background:#53fc18}
+  .panel{background:#14191a;border:1px solid #232b2d}
+  .row:hover{background:#1a2123;cursor:pointer}
+  .flash{animation:flash 1.4s ease-out}
+  @keyframes flash{from{background:rgba(83,252,24,.28)}to{background:transparent}}
+  @media (prefers-reduced-motion:reduce){.flash{animation:none}}
+  :focus-visible{outline:2px solid #53fc18;outline-offset:2px}
+</style>
+</head>
+<body class="min-h-screen">
+
+<script>
+/* =================== CONFIG — edit these =================== */
+const CONFIG = {
+  SUPABASE_URL:      "https://YOUR-PROJECT.supabase.co",
+  SUPABASE_ANON_KEY: "YOUR-ANON-PUBLIC-KEY",
+  CHANNEL_NAME:      "seu_canal",     // shown in header
+  KICK_CHATROOM_ID:  "00000000",      // numeric chatroom id (see README steps)
+  // Kick's public Pusher credentials (taken from kick.com's web client; may change)
+  PUSHER_KEY:        "32cbd69e4b950bf97679",
+  PUSHER_CLUSTER:    "us2",
+  COMMAND:           "!presente",
+  LEADERBOARD_SIZE:  50,
+};
+/* ========================================================== */
+</script>
+
+<header class="max-w-4xl mx-auto px-4 pt-8 pb-4">
+  <div class="flex items-center justify-between gap-4 flex-wrap">
+    <div>
+      <h1 class="text-3xl font-extrabold tracking-tight">Presença <span class="kick" id="chan"></span></h1>
+      <p class="text-sm text-zinc-400 mt-1">Digite <code class="kick">!presente</code> no chat a cada hora para somar pontos e manter sua sequência.</p>
+    </div>
+    <div id="status" class="text-xs px-3 py-1.5 rounded-full panel flex items-center gap-2" role="status">
+      <span id="dot" class="w-2 h-2 rounded-full bg-zinc-500"></span><span id="statusTxt">Carregando…</span>
+    </div>
+  </div>
+  <label class="block mt-6">
+    <span class="sr-only">Buscar usuário</span>
+    <input id="search" type="search" placeholder="Buscar usuário…" autocomplete="off"
+      class="w-full rounded-lg px-4 py-3 bg-[#14191a] border border-[#232b2d] placeholder-zinc-500 focus:border-[#53fc18] outline-none">
+  </label>
+</header>
+
+<main class="max-w-4xl mx-auto px-4 pb-16">
+  <div class="panel rounded-xl overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead class="text-zinc-400 text-left">
+        <tr class="border-b border-[#232b2d]">
+          <th class="px-4 py-3 w-12">#</th>
+          <th class="px-4 py-3">Usuário</th>
+          <th class="px-4 py-3 text-right">Presenças</th>
+          <th class="px-4 py-3 text-right">Sequência</th>
+          <th class="px-4 py-3 text-right">Última vez</th>
+        </tr>
+      </thead>
+      <tbody id="board"></tbody>
+    </table>
+    <p id="empty" class="hidden p-8 text-center text-zinc-400">Nenhum usuário encontrado.</p>
+  </div>
+  <p id="liveNote" class="text-xs text-zinc-500 mt-3"></p>
+</main>
+
+<!-- Profile modal -->
+<div id="modal" class="hidden fixed inset-0 z-50 bg-black/70 items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="mName">
+  <div class="panel rounded-xl w-full max-w-md p-6 relative">
+    <button id="mClose" class="absolute top-3 right-4 text-2xl text-zinc-400 hover:text-white" aria-label="Fechar">&times;</button>
+    <h2 id="mName" class="text-2xl font-bold kick break-all"></h2>
+    <p id="mRank" class="text-sm text-zinc-400 mb-4"></p>
+    <dl class="grid grid-cols-3 gap-3 text-center">
+      <div class="rounded-lg bg-[#0b0e0f] p-3"><dt class="text-xs text-zinc-400">Presenças</dt><dd id="mTotal" class="text-2xl font-bold"></dd></div>
+      <div class="rounded-lg bg-[#0b0e0f] p-3"><dt class="text-xs text-zinc-400">Sequência</dt><dd id="mStreak" class="text-2xl font-bold"></dd></div>
+      <div class="rounded-lg bg-[#0b0e0f] p-3"><dt class="text-xs text-zinc-400">Recorde</dt><dd id="mBest" class="text-2xl font-bold"></dd></div>
+    </dl>
+    <h3 class="mt-5 mb-2 text-sm text-zinc-400">Últimas presenças</h3>
+    <ul id="mHistory" class="text-sm space-y-1 max-h-40 overflow-y-auto"></ul>
+  </div>
+</div>
+
+<script>
+/* ---------- helpers ---------- */
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtDate = (iso) => iso ? new Date(iso).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}) : '—';
+function ago(iso){
+  if(!iso) return '—';
+  const s = Math.max(0,(Date.now()-new Date(iso))/1000);
+  if(s<60) return 'agora';
+  if(s<3600) return Math.floor(s/60)+' min atrás';
+  if(s<86400) return Math.floor(s/3600)+' h atrás';
+  return Math.floor(s/86400)+' d atrás';
+}
+function setStatus(txt, color){ $('statusTxt').textContent = txt; $('dot').style.background = color; }
+
+$('chan').textContent = CONFIG.CHANNEL_NAME;
+document.title = `Presença — ${CONFIG.CHANNEL_NAME}`;
+
+/* ---------- Supabase ---------- */
+const db = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+let rows = [];
+let flashName = null;
+
+async function loadBoard(){
+  const { data, error } = await db.from('users')
+    .select('username,display_name,total_checkins,streak,best_streak,last_presente_at')
+    .order('total_checkins',{ascending:false})
+    .order('last_presente_at',{ascending:false})
+    .limit(CONFIG.LEADERBOARD_SIZE);
+  if(error){ setStatus('Erro ao carregar ranking','#ef4444'); console.error(error); return; }
+  rows = data; render();
+}
+
+function render(){
+  const q = $('search').value.trim().toLowerCase();
+  const list = rows.map((u,i)=>({...u,rank:i+1})).filter(u => !q || u.username.includes(q) || u.display_name.toLowerCase().includes(q));
+  $('empty').classList.toggle('hidden', list.length>0);
+  $('board').innerHTML = list.map(u => `
+    <tr class="row border-b border-[#1c2325] ${u.username===flashName?'flash':''}" data-u="${esc(u.username)}" tabindex="0">
+      <td class="px-4 py-3 ${u.rank<=3?'kick font-bold':'text-zinc-400'}">${u.rank}</td>
+      <td class="px-4 py-3 font-medium">${esc(u.display_name)}</td>
+      <td class="px-4 py-3 text-right font-semibold">${u.total_checkins}</td>
+      <td class="px-4 py-3 text-right">${u.streak>1?'🔥 ':''}${u.streak} d</td>
+      <td class="px-4 py-3 text-right text-zinc-400">${ago(u.last_presente_at)}</td>
+    </tr>`).join('');
+  flashName = null;
+}
+
+$('search').addEventListener('input', async () => {
+  render();
+  // if the user isn't in the Top N, let Enter look them up directly
+});
+$('search').addEventListener('keydown', async (e) => {
+  if(e.key!=='Enter') return;
+  const q = $('search').value.trim().toLowerCase();
+  if(q) openProfile(q);
+});
+$('board').addEventListener('click', e => { const tr=e.target.closest('tr[data-u]'); if(tr) openProfile(tr.dataset.u); });
+$('board').addEventListener('keydown', e => { if(e.key==='Enter'){ const tr=e.target.closest('tr[data-u]'); if(tr) openProfile(tr.dataset.u);} });
+
+/* ---------- Profile modal ---------- */
+async function openProfile(username){
+  const { data: u } = await db.from('users').select('*').eq('username',username).maybeSingle();
+  if(!u){ alert('Usuário não encontrado.'); return; }
+  const { count } = await db.from('users').select('id',{count:'exact',head:true}).gt('total_checkins',u.total_checkins);
+  const { data: hist } = await db.from('check_ins').select('created_at').eq('user_id',u.id).order('created_at',{ascending:false}).limit(10);
+  $('mName').textContent = u.display_name;
+  $('mRank').textContent = `Posição #${(count||0)+1} · última presença ${fmtDate(u.last_presente_at)}`;
+  $('mTotal').textContent = u.total_checkins;
+  $('mStreak').textContent = u.streak+' d';
+  $('mBest').textContent = u.best_streak+' d';
+  $('mHistory').innerHTML = (hist||[]).map(h=>`<li class="text-zinc-300">${fmtDate(h.created_at)}</li>`).join('') || '<li class="text-zinc-500">Sem registros.</li>';
+  $('modal').classList.remove('hidden'); $('modal').classList.add('flex');
+  $('mClose').focus();
+}
+const closeModal = () => { $('modal').classList.add('hidden'); $('modal').classList.remove('flex'); };
+$('mClose').onclick = closeModal;
+$('modal').addEventListener('click', e => { if(e.target===$('modal')) closeModal(); });
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+
+/* ---------- Realtime leaderboard ---------- */
+let refreshTimer;
+const scheduleRefresh = () => { clearTimeout(refreshTimer); refreshTimer = setTimeout(loadBoard, 400); };
+db.channel('users-feed')
+  .on('postgres_changes',{event:'*',schema:'public',table:'users'}, payload => {
+    flashName = payload.new?.username; scheduleRefresh();
+  })
+  .subscribe();
+setInterval(loadBoard, 60000);   // fallback polling + refreshes "x min atrás"
+
+/* ---------- Kick chat listener (only when URL has ?listen=1) ---------- */
+const LISTEN = new URLSearchParams(location.search).get('listen') === '1';
+const recentAttempts = new Map();      // username -> timestamp, avoids hammering the DB
+
+async function handleChat(msg){
+  const content = (msg?.content || '').trim();
+  const sender  = msg?.sender;
+  if(!sender?.slug || !content.toLowerCase().startsWith(CONFIG.COMMAND)) return;
+  if(content.length > CONFIG.COMMAND.length && !/\s/.test(content[CONFIG.COMMAND.length])) return; // "!presentexyz"
+
+  const user = sender.slug.toLowerCase();
+  const last = recentAttempts.get(user) || 0;
+  if(Date.now() - last < 60_000) return;           // local throttle: 1 try/min per user
+  recentAttempts.set(user, Date.now());
+
+  const { data, error } = await db.rpc('register_presente',{ p_username: user, p_display: sender.username });
+  if(error){ console.error('RPC error', error); return; }
+  if(data.ok){
+    console.log(`✅ ${sender.username}: ${data.total} presenças, sequência ${data.streak}`);
+    flashName = user; scheduleRefresh();
+  } else {
+    console.log(`⏳ ${sender.username}: ${data.reason}`, data.retry_in_seconds ?? '');
+  }
+}
+
+function startKick(){
+  const pusher = new Pusher(CONFIG.PUSHER_KEY, { cluster: CONFIG.PUSHER_CLUSTER, forceTLS: true });
+  pusher.connection.bind('connected', () => setStatus('Chat conectado','#53fc18'));
+  pusher.connection.bind('disconnected', () => setStatus('Chat desconectado','#f59e0b'));
+  pusher.connection.bind('error', () => setStatus('Erro no chat','#ef4444'));
+  const ch = pusher.subscribe(`chatrooms.${CONFIG.KICK_CHATROOM_ID}.v2`);
+  ch.bind('App\\Events\\ChatMessageEvent', (evt) => {
+    let msg = evt; if(typeof evt === 'string'){ try{ msg = JSON.parse(evt); }catch{ return; } }
+    handleChat(msg);
+  });
+}
+
+/* ---------- boot ---------- */
+loadBoard();
+if(LISTEN){
+  $('liveNote').textContent = 'Modo escuta ativo: mantenha esta aba aberta para registrar presenças.';
+  startKick();
+} else {
+  setStatus('Ranking ao vivo','#53fc18');
+  $('liveNote').textContent = 'Atualiza em tempo real.';
+}
+</script>
+</body>
+</html>
