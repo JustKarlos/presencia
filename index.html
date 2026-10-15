@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ranking de presencia</title>
+<title>Ranking de presentes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
@@ -120,7 +120,7 @@ const CONFIG = {
     <div class="top">
       <div>
         <h1 id="chan"></h1>
-        <p class="sub">Ranking de presencia</p>
+        <p class="sub">Ranking de presentes</p>
       </div>
       <div class="status" role="status"><span class="dot" id="dot"></span><span id="statusTxt">Conectando…</span></div>
     </div>
@@ -149,11 +149,11 @@ const CONFIG = {
       <div><h2 id="mName"></h2><p id="mRank"></p></div>
     </div>
     <div class="stats">
-      <div class="stat"><b id="mTotal"></b><span>Presencias</span></div>
+      <div class="stat"><b id="mTotal"></b><span>Presentes</span></div>
       <div class="stat"><b id="mStreak"></b><span>Racha actual</span></div>
       <div class="stat"><b id="mBest"></b><span>Mejor racha</span></div>
     </div>
-    <h3>Últimas presencias</h3>
+    <h3>Últimos presentes</h3>
     <ul id="mHistory" class="hist"></ul>
   </div>
 </div>
@@ -202,7 +202,7 @@ const flame = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColo
 const streakPill = (n) => n >= 2 ? `<span class="streak">${flame}${n} ${plural(n,'día','días')}</span>` : '';
 
 $('chan').textContent = CONFIG.CHANNEL_NAME;
-document.title = `Ranking de presencia · ${CONFIG.CHANNEL_NAME}`;
+document.title = `Ranking de presentes · ${CONFIG.CHANNEL_NAME}`;
 
 /* ---------- Supabase ---------- */
 const db = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
@@ -225,7 +225,7 @@ function podiumTile(u){
   return `<button class="pod p${u.rank} ${u.username===flashName?'flash':''}" data-u="${esc(u.username)}">
     ${avatar(u, u.rank===1 ? 96 : 72)}
     <span class="who"><span class="nm">${esc(u.display_name)}</span>
-      <span class="pts">${nf.format(u.total_checkins)} ${plural(u.total_checkins,'presencia','presencias')}</span></span>
+      <span class="pts">${nf.format(u.total_checkins)} ${plural(u.total_checkins,'presentes','presentes')}</span></span>
     <span class="plinth">${u.rank}</span>
   </button>`;
 }
@@ -235,7 +235,7 @@ function rowItem(u){
     ${avatar(u, 40)}
     <span class="info"><b>${esc(u.display_name)}</b><small>${ago(u.last_presente_at)}</small></span>
     ${streakPill(u.streak)}
-    <span class="total">${nf.format(u.total_checkins)}<small>${plural(u.total_checkins,'presencia','presencias')}</small></span>
+    <span class="total">${nf.format(u.total_checkins)}<small>${plural(u.total_checkins,'presente','presentes')}</small></span>
   </button></li>`;
 }
 
@@ -266,7 +266,7 @@ function render(notFound){
   if(nothing){
     empty.textContent = notFound ? `No encontramos a «${notFound}». Prueba con el nombre de usuario exacto.`
       : q ? 'Nadie coincide con tu búsqueda. Pulsa Enter para buscar el usuario exacto.'
-          : 'Aún no hay presencias. Escribe !presente en el chat durante el próximo directo.';
+          : 'Aún no hay presentes. Escribe !presente en el chat durante el próximo directo.';
   }
   flashName = null;
 }
