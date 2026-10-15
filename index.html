@@ -22,7 +22,17 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;text-a
 [hidden]{display:none!important}
 .sr{position:absolute;left:-9999px}
 img,.stat,.panel,.feed,.card,.tab{image-rendering:pixelated}
-html { min-width: 60vw; min-height: 60vh; cursor: url(assets/Cursors.png), auto; }
+/* Cursor por defecto para toda la página */
+html {
+  min-width: 60vw;
+  min-height: 60vh;
+  cursor: url('assets/Cursors.png'), auto;
+}
+
+/* Cursor tipo "pointer" para elementos interactivos */
+a, button, [role="button"], input[type="submit"] {
+  cursor: url('assets/pointer.png'), pointer;
+}
 /* Cabecera */
 header{padding:1.2rem 0 0;display:grid;grid-template-columns:1fr minmax(0,620px) 1fr;gap:1rem;align-items:start}
 .sign img{display:block;width:100%;height:auto;filter:drop-shadow(0 8px 10px rgba(0,0,0,.55));image-rendering:auto}
