@@ -1,229 +1,324 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="es">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ranking de Presentes</title>
-<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<title>Ranking de presencia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/pusher-js@8.4.0/dist/web/pusher.min.js"></script>
 <style>
-  body{background:#0b0e0f;color:#e8ecea;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
-  .kick{color:#53fc18}.bg-kick{background:#53fc18}
-  .panel{background:#14191a;border:1px solid #232b2d}
-  .row:hover{background:#1a2123;cursor:pointer}
-  .flash{animation:flash 1.4s ease-out}
-  @keyframes flash{from{background:rgba(83,252,24,.28)}to{background:transparent}}
-  @media (prefers-reduced-motion:reduce){.flash{animation:none}}
-  :focus-visible{outline:2px solid #53fc18;outline-offset:2px}
+:root{
+  --bg:#0b0e0f; --surface:#12181a; --surface-2:#182022; --line:#222d30;
+  --text:#e9eeec; --muted:#8b9c98; --kick:#53fc18; --kick-ink:#07210a;
+  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --body:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+html{background:var(--bg)}
+body{background:radial-gradient(900px 380px at 50% -120px,rgba(83,252,24,.10),transparent 70%),var(--bg);
+  color:var(--text);font-family:var(--body);line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;text-align:inherit}
+:focus-visible{outline:2px solid var(--kick);outline-offset:3px;border-radius:8px}
+.wrap{max-width:760px;margin:0 auto;padding:0 1rem}
+
+/* Cabecera */
+header{padding:2.5rem 0 1.25rem}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(2.2rem,7vw,3.4rem);line-height:1.02;letter-spacing:-.02em;word-break:break-word}
+.sub{color:var(--muted);margin-top:.35rem;font-size:1.05rem}
+.status{display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:var(--muted);background:var(--surface);
+  border:1px solid var(--line);border-radius:999px;padding:.35rem .8rem}
+.dot{width:8px;height:8px;border-radius:50%;background:#5b6a67}
+.how{margin-top:1.1rem;padding:.85rem 1rem;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--kick);
+  border-radius:10px;color:#c7d3cf;font-size:.95rem}
+.how code{font-family:var(--display);font-weight:600;color:var(--kick);font-size:1.02rem}
+.search{margin-top:1rem;position:relative}
+.search svg{position:absolute;left:.9rem;top:50%;transform:translateY(-50%);color:var(--muted)}
+.search input{width:100%;padding:.8rem 1rem .8rem 2.6rem;background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  color:var(--text);font:inherit;outline:none}
+.search input:focus{border-color:var(--kick)}
+.search input::placeholder{color:#62726e}
+
+/* Podio */
+.podium{display:flex;align-items:flex-end;justify-content:center;gap:.6rem;margin:2rem 0 1.5rem}
+.pod{flex:1;max-width:230px;display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0}
+.pod .who{margin:.6rem 0 .75rem;min-width:0;width:100%}
+.pod .nm{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+.pod .pts{color:var(--muted);font-size:.85rem}
+.plinth{width:100%;display:grid;place-items:center;font-family:var(--display);font-weight:800;border-radius:12px 12px 0 0;
+  background:var(--surface-2);color:#51615d;border:1px solid var(--line);border-bottom:0}
+.p1 .plinth{height:82px;font-size:3rem;background:var(--kick);color:var(--kick-ink);border-color:var(--kick)}
+.p2 .plinth{height:58px;font-size:2.1rem}
+.p3 .plinth{height:42px;font-size:1.6rem}
+.p1 .av{box-shadow:0 0 0 3px var(--bg),0 0 0 6px var(--kick)}
+.p2 .av,.p3 .av{box-shadow:0 0 0 3px var(--bg),0 0 0 5px #35443f}
+.pod:hover .nm{color:var(--kick)}
+.rise .plinth{transform-origin:bottom;animation:rise .7s cubic-bezier(.2,.8,.2,1) both}
+.rise .p2 .plinth{animation-delay:.05s}.rise .p3 .plinth{animation-delay:.12s}
+@keyframes rise{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+
+/* Lista */
+.listhead{display:flex;justify-content:space-between;align-items:baseline;margin:.5rem 0 .4rem;color:var(--muted);font-size:.85rem}
+.list{list-style:none;padding:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface)}
+.row{width:100%;display:flex;align-items:center;gap:.8rem;padding:.7rem 1rem;border-bottom:1px solid var(--line)}
+.list li:last-child .row{border-bottom:0}
+.row:hover{background:var(--surface-2)}
+.rk{width:2rem;text-align:right;font-family:var(--display);font-weight:600;color:var(--muted);flex:none}
+.info{flex:1;min-width:0}
+.info b{display:block;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.info small{color:var(--muted);font-size:.8rem}
+.streak{display:inline-flex;align-items:center;gap:.25rem;font-size:.78rem;font-weight:700;color:#ffb347;
+  background:rgba(255,179,71,.12);border-radius:999px;padding:.15rem .55rem;white-space:nowrap}
+.total{font-family:var(--display);font-weight:800;font-size:1.25rem;min-width:2.5rem;text-align:right}
+.total small{display:block;font-family:var(--body);font-weight:400;font-size:.68rem;color:var(--muted);margin-top:-.2rem}
+.empty{padding:2.5rem 1rem;text-align:center;color:var(--muted)}
+.note{color:#62726e;font-size:.78rem;margin:.9rem 0 3rem}
+
+/* Avatares */
+.av{display:inline-grid;place-items:center;border-radius:50%;object-fit:cover;flex:none;font-family:var(--display);font-weight:800;color:#dfe9e5;background:var(--surface-2)}
+
+/* Modal */
+.modal{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:1rem}
+.modal.open{display:flex}
+.card{position:relative;width:100%;max-width:420px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:1.5rem}
+.close{position:absolute;top:.6rem;right:.9rem;font-size:1.7rem;color:var(--muted);line-height:1}
+.close:hover{color:#fff}
+.mh{display:flex;gap:1rem;align-items:center;margin-bottom:1.2rem;padding-right:1.5rem}
+.mh h2{font-family:var(--display);font-weight:800;font-size:1.6rem;line-height:1.1;word-break:break-all}
+.mh p{color:var(--muted);font-size:.88rem}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
+.stat{background:var(--bg);border-radius:12px;padding:.7rem .4rem;text-align:center}
+.stat b{display:block;font-family:var(--display);font-weight:800;font-size:1.6rem;line-height:1.1}
+.stat span{font-size:.75rem;color:var(--muted)}
+.card h3{margin:1.2rem 0 .4rem;font-size:.9rem;color:var(--muted);font-weight:500}
+.hist{list-style:none;padding:0;max-height:160px;overflow-y:auto;font-size:.9rem;color:#c7d3cf}
+.hist li{padding:.25rem 0;border-bottom:1px solid var(--line)}
+
+.flash{animation:flash 1.6s ease-out}
+@keyframes flash{from{background:rgba(83,252,24,.25)}to{background:transparent}}
+@media (prefers-reduced-motion:reduce){.flash,.rise .plinth{animation:none}}
+@media (max-width:420px){.pod .pts{font-size:.75rem}.p1 .av{width:80px!important;height:80px!important}.p2 .av,.p3 .av{width:58px!important;height:58px!important}}
 </style>
 </head>
-<body class="min-h-screen">
+<body>
 
 <script>
-/* =================== CONFIG — edit these =================== */
+/* ============== CONFIGURACIÓN: edita estos valores ============== */
 const CONFIG = {
   SUPABASE_URL:      "https://nlgkpoomhgehuabrkwhp.supabase.co",
   SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5sZ2twb29taGdlaHVhYnJrd2hwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE3NjE3NzAsImV4cCI6MjEwNzMzNzc3MH0.DM1cUzclLbu8ej8m7PAQEja6X20gBadNiuqMEzbk-_g",
-  CHANNEL_NAME:      "OptiMaquina",     // shown in header
-  KICK_CHATROOM_ID:  "48769923",      // numeric chatroom id (see README steps)
-  // Kick's public Pusher credentials (taken from kick.com's web client; may change)
-  PUSHER_KEY:        "32cbd69e4b950bf97679",
-  PUSHER_CLUSTER:    "us2",
-  COMMAND:           "!presente",
+  CHANNEL_NAME:      "OptiMaquina",   // se muestra como título
   LEADERBOARD_SIZE:  50,
 };
-/* ========================================================== */
+/* ================================================================ */
 </script>
 
-<header class="max-w-4xl mx-auto px-4 pt-8 pb-4">
-  <div class="flex items-center justify-between gap-4 flex-wrap">
-    <div>
-      <h1 class="text-3xl font-extrabold tracking-tight">Presente <span class="kick" id="chan"></span></h1>
-      <p class="text-sm text-zinc-400 mt-1">Digite <code class="kick">!presente</code> en el chat para sumar +1 presente.</p>
+<div class="wrap">
+  <header>
+    <div class="top">
+      <div>
+        <h1 id="chan"></h1>
+        <p class="sub">Ranking de presencia</p>
+      </div>
+      <div class="status" role="status"><span class="dot" id="dot"></span><span id="statusTxt">Conectando…</span></div>
     </div>
-    <div id="status" class="text-xs px-3 py-1.5 rounded-full panel flex items-center gap-2" role="status">
-      <span id="dot" class="w-2 h-2 rounded-full bg-zinc-500"></span><span id="statusTxt">Cargando…</span>
+    <p class="how">Escribe <code>!presente</code> en el chat durante el directo. Sumas 1 punto cada hora y tu racha crece por cada día seguido que participes.</p>
+    <label class="search">
+      <span class="sr" style="position:absolute;left:-9999px">Buscar usuario</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="search" type="search" placeholder="Buscar por usuario…" autocomplete="off">
+    </label>
+  </header>
+
+  <main>
+    <section id="podium" class="podium" aria-label="Los tres primeros puestos"></section>
+    <div class="listhead"><span id="count"></span></div>
+    <ul id="board" class="list"></ul>
+    <p id="empty" class="empty" hidden></p>
+    <p class="note">Las presencias solo cuentan mientras el canal está en directo.</p>
+  </main>
+</div>
+
+<div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="mName">
+  <div class="card">
+    <button id="mClose" class="close" aria-label="Cerrar">&times;</button>
+    <div class="mh">
+      <span id="mAvatar"></span>
+      <div><h2 id="mName"></h2><p id="mRank"></p></div>
     </div>
-  </div>
-  <label class="block mt-6">
-    <span class="sr-only">Buscar usuario</span>
-    <input id="search" type="search" placeholder="Buscar usuário…" autocomplete="off"
-      class="w-full rounded-lg px-4 py-3 bg-[#14191a] border border-[#232b2d] placeholder-zinc-500 focus:border-[#53fc18] outline-none">
-  </label>
-</header>
-
-<main class="max-w-4xl mx-auto px-4 pb-16">
-  <div class="panel rounded-xl overflow-x-auto">
-    <table class="w-full text-sm">
-      <thead class="text-zinc-400 text-left">
-        <tr class="border-b border-[#232b2d]">
-          <th class="px-4 py-3 w-12">#</th>
-          <th class="px-4 py-3">Usuario</th>
-          <th class="px-4 py-3 text-right">Presentes</th>
-          <th class="px-4 py-3 text-right">Sequência</th>
-          <th class="px-4 py-3 text-right">Ultima vez</th>
-        </tr>
-      </thead>
-      <tbody id="board"></tbody>
-    </table>
-    <p id="empty" class="hidden p-8 text-center text-zinc-400">Ningun usuario encontrado.</p>
-  </div>
-  <p id="liveNote" class="text-xs text-zinc-500 mt-3"></p>
-</main>
-
-<!-- Profile modal -->
-<div id="modal" class="hidden fixed inset-0 z-50 bg-black/70 items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="mName">
-  <div class="panel rounded-xl w-full max-w-md p-6 relative">
-    <button id="mClose" class="absolute top-3 right-4 text-2xl text-zinc-400 hover:text-white" aria-label="Fechar">&times;</button>
-    <h2 id="mName" class="text-2xl font-bold kick break-all"></h2>
-    <p id="mRank" class="text-sm text-zinc-400 mb-4"></p>
-    <dl class="grid grid-cols-3 gap-3 text-center">
-      <div class="rounded-lg bg-[#0b0e0f] p-3"><dt class="text-xs text-zinc-400">Presentes</dt><dd id="mTotal" class="text-2xl font-bold"></dd></div>
-      <div class="rounded-lg bg-[#0b0e0f] p-3"><dt class="text-xs text-zinc-400">Sequência</dt><dd id="mStreak" class="text-2xl font-bold"></dd></div>
-      <div class="rounded-lg bg-[#0b0e0f] p-3"><dt class="text-xs text-zinc-400">Record</dt><dd id="mBest" class="text-2xl font-bold"></dd></div>
-    </dl>
-    <h3 class="mt-5 mb-2 text-sm text-zinc-400">Ultimas presentes</h3>
-    <ul id="mHistory" class="text-sm space-y-1 max-h-40 overflow-y-auto"></ul>
+    <div class="stats">
+      <div class="stat"><b id="mTotal"></b><span>Presencias</span></div>
+      <div class="stat"><b id="mStreak"></b><span>Racha actual</span></div>
+      <div class="stat"><b id="mBest"></b><span>Mejor racha</span></div>
+    </div>
+    <h3>Últimas presencias</h3>
+    <ul id="mHistory" class="hist"></ul>
   </div>
 </div>
 
 <script>
-/* ---------- helpers ---------- */
+/* ---------- utilidades ---------- */
 const $ = (id) => document.getElementById(id);
-const esc = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const fmtDate = (iso) => iso ? new Date(iso).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}) : '—';
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nf = new Intl.NumberFormat('es-AR');
+const plural = (n, one, many) => n === 1 ? one : many;
+const fmtDate = (iso) => iso ? new Date(iso).toLocaleString('es-AR',{dateStyle:'medium',timeStyle:'short'}) : '—';
 function ago(iso){
-  if(!iso) return '—';
+  if(!iso) return 'Sin registros';
   const s = Math.max(0,(Date.now()-new Date(iso))/1000);
-  if(s<60) return 'agora';
-  if(s<3600) return Math.floor(s/60)+' min atrás';
-  if(s<86400) return Math.floor(s/3600)+' h atrás';
-  return Math.floor(s/86400)+' d atrás';
+  if(s < 60) return 'ahora mismo';
+  if(s < 3600) return `hace ${Math.floor(s/60)} min`;
+  if(s < 86400) return `hace ${Math.floor(s/3600)} h`;
+  const d = Math.floor(s/86400);
+  return `hace ${d} ${plural(d,'día','días')}`;
 }
 function setStatus(txt, color){ $('statusTxt').textContent = txt; $('dot').style.background = color; }
+const hue = (s) => { let h = 0; for(const c of s) h = (h*31 + c.charCodeAt(0)) % 360; return h; };
+
+/* Avatar: imagen de Kick o, si falta o falla, un círculo con las iniciales */
+function avatar(u, size){
+  const ini = esc((u.display_name || u.username).trim().slice(0,2).toUpperCase());
+  const h = hue(u.username);
+  const st = `width:${size}px;height:${size}px;font-size:${Math.round(size*.38)}px`;
+  if(u.avatar_url && /^https:\/\//.test(u.avatar_url)){
+    return `<img class="av" style="${st}" src="${esc(u.avatar_url)}" alt="" loading="lazy" referrerpolicy="no-referrer" data-ini="${ini}" data-h="${h}">`;
+  }
+  return `<span class="av" style="${st};background:hsl(${h} 30% 24%)">${ini}</span>`;
+}
+document.addEventListener('error', (e) => {
+  const t = e.target;
+  if(t.tagName === 'IMG' && t.classList.contains('av')){
+    const s = document.createElement('span');
+    s.className = 'av';
+    s.style.cssText = t.style.cssText + `;background:hsl(${t.dataset.h} 30% 24%)`;
+    s.textContent = t.dataset.ini;
+    t.replaceWith(s);
+  }
+}, true);
+
+const flame = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c1 4-2 5-2 8a3 3 0 006 0c0-1-.5-2-1-3 3 1 5 4 5 7a8 8 0 01-16 0c0-5 4-7 8-12z"/></svg>';
+const streakPill = (n) => n >= 2 ? `<span class="streak">${flame}${n} ${plural(n,'día','días')}</span>` : '';
 
 $('chan').textContent = CONFIG.CHANNEL_NAME;
-document.title = `Presentes — ${CONFIG.CHANNEL_NAME}`;
+document.title = `Ranking de presencia · ${CONFIG.CHANNEL_NAME}`;
 
 /* ---------- Supabase ---------- */
 const db = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
 let rows = [];
 let flashName = null;
+let firstRender = true;
 
 async function loadBoard(){
   const { data, error } = await db.from('users')
-    .select('username,display_name,total_checkins,streak,best_streak,last_presente_at')
+    .select('username,display_name,avatar_url,total_checkins,streak,best_streak,last_presente_at')
     .order('total_checkins',{ascending:false})
     .order('last_presente_at',{ascending:false})
     .limit(CONFIG.LEADERBOARD_SIZE);
-  if(error){ setStatus('Erro ao carregar ranking','#ef4444'); console.error(error); return; }
+  if(error){ setStatus('No se pudo cargar el ranking','#ef4444'); console.error(error); return; }
   rows = data; render();
 }
 
-function render(){
+/* ---------- dibujo ---------- */
+function podiumTile(u){
+  return `<button class="pod p${u.rank} ${u.username===flashName?'flash':''}" data-u="${esc(u.username)}">
+    ${avatar(u, u.rank===1 ? 96 : 72)}
+    <span class="who"><span class="nm">${esc(u.display_name)}</span>
+      <span class="pts">${nf.format(u.total_checkins)} ${plural(u.total_checkins,'presencia','presencias')}</span></span>
+    <span class="plinth">${u.rank}</span>
+  </button>`;
+}
+function rowItem(u){
+  return `<li><button class="row ${u.username===flashName?'flash':''}" data-u="${esc(u.username)}">
+    <span class="rk">${u.rank}</span>
+    ${avatar(u, 40)}
+    <span class="info"><b>${esc(u.display_name)}</b><small>${ago(u.last_presente_at)}</small></span>
+    ${streakPill(u.streak)}
+    <span class="total">${nf.format(u.total_checkins)}<small>${plural(u.total_checkins,'presencia','presencias')}</small></span>
+  </button></li>`;
+}
+
+function render(notFound){
   const q = $('search').value.trim().toLowerCase();
-  const list = rows.map((u,i)=>({...u,rank:i+1})).filter(u => !q || u.username.includes(q) || u.display_name.toLowerCase().includes(q));
-  $('empty').classList.toggle('hidden', list.length>0);
-  $('board').innerHTML = list.map(u => `
-    <tr class="row border-b border-[#1c2325] ${u.username===flashName?'flash':''}" data-u="${esc(u.username)}" tabindex="0">
-      <td class="px-4 py-3 ${u.rank<=3?'kick font-bold':'text-zinc-400'}">${u.rank}</td>
-      <td class="px-4 py-3 font-medium">${esc(u.display_name)}</td>
-      <td class="px-4 py-3 text-right font-semibold">${u.total_checkins}</td>
-      <td class="px-4 py-3 text-right">${u.streak>1?'🔥 ':''}${u.streak} d</td>
-      <td class="px-4 py-3 text-right text-zinc-400">${ago(u.last_presente_at)}</td>
-    </tr>`).join('');
+  const all = rows.map((u,i) => ({...u, rank:i+1}));
+  const filtered = q ? all.filter(u => u.username.includes(q) || u.display_name.toLowerCase().includes(q)) : all;
+  const usePodium = !q && all.length >= 3;
+
+  const pod = $('podium');
+  pod.hidden = !usePodium;
+  if(usePodium){
+    const [a,b,c] = all;
+    pod.className = 'podium' + (firstRender ? ' rise' : '');
+    pod.innerHTML = [b,a,c].map(podiumTile).join('');
+    firstRender = false;
+  }
+
+  const list = usePodium ? all.slice(3) : filtered;
+  $('board').innerHTML = list.map(rowItem).join('');
+  $('board').hidden = list.length === 0;
+  $('count').textContent = q ? `${filtered.length} ${plural(filtered.length,'resultado','resultados')}`
+                             : `${all.length} ${plural(all.length,'participante','participantes')}`;
+
+  const empty = $('empty');
+  const nothing = q ? filtered.length === 0 : all.length === 0;
+  empty.hidden = !nothing;
+  if(nothing){
+    empty.textContent = notFound ? `No encontramos a «${notFound}». Prueba con el nombre de usuario exacto.`
+      : q ? 'Nadie coincide con tu búsqueda. Pulsa Enter para buscar el usuario exacto.'
+          : 'Aún no hay presencias. Escribe !presente en el chat durante el próximo directo.';
+  }
   flashName = null;
 }
 
-$('search').addEventListener('input', async () => {
-  render();
-  // if the user isn't in the Top N, let Enter look them up directly
-});
+/* ---------- búsqueda y perfil ---------- */
+$('search').addEventListener('input', () => render());
 $('search').addEventListener('keydown', async (e) => {
-  if(e.key!=='Enter') return;
-  const q = $('search').value.trim().toLowerCase();
-  if(q) openProfile(q);
+  if(e.key !== 'Enter') return;
+  const q = $('search').value.trim();
+  if(!q) return;
+  if(!(await openProfile(q))) render(q);
 });
-$('board').addEventListener('click', e => { const tr=e.target.closest('tr[data-u]'); if(tr) openProfile(tr.dataset.u); });
-$('board').addEventListener('keydown', e => { if(e.key==='Enter'){ const tr=e.target.closest('tr[data-u]'); if(tr) openProfile(tr.dataset.u);} });
+const pick = (e) => { const b = e.target.closest('[data-u]'); if(b) openProfile(b.dataset.u); };
+$('board').addEventListener('click', pick);
+$('podium').addEventListener('click', pick);
 
-/* ---------- Profile modal ---------- */
-async function openProfile(username){
-  const { data: u } = await db.from('users').select('*').eq('username',username).maybeSingle();
-  if(!u){ alert('Usuário não encontrado.'); return; }
-  const { count } = await db.from('users').select('id',{count:'exact',head:true}).gt('total_checkins',u.total_checkins);
-  const { data: hist } = await db.from('check_ins').select('created_at').eq('user_id',u.id).order('created_at',{ascending:false}).limit(10);
+async function openProfile(raw){
+  const username = raw.trim().toLowerCase().replace(/^@/, '').replace(/_/g, '-');
+  const { data: u } = await db.from('users').select('*').eq('username', username).maybeSingle();
+  if(!u) return false;
+  const { count } = await db.from('users').select('id',{count:'exact',head:true}).gt('total_checkins', u.total_checkins);
+  const { data: hist } = await db.from('check_ins').select('created_at').eq('user_id', u.id).order('created_at',{ascending:false}).limit(10);
+  $('mAvatar').innerHTML = avatar(u, 72);
   $('mName').textContent = u.display_name;
-  $('mRank').textContent = `Posição #${(count||0)+1} · última presença ${fmtDate(u.last_presente_at)}`;
-  $('mTotal').textContent = u.total_checkins;
-  $('mStreak').textContent = u.streak+' d';
-  $('mBest').textContent = u.best_streak+' d';
-  $('mHistory').innerHTML = (hist||[]).map(h=>`<li class="text-zinc-300">${fmtDate(h.created_at)}</li>`).join('') || '<li class="text-zinc-500">Sem registros.</li>';
-  $('modal').classList.remove('hidden'); $('modal').classList.add('flex');
+  $('mRank').textContent = `Puesto n.º ${(count||0)+1} · última vez ${ago(u.last_presente_at)}`;
+  $('mTotal').textContent = nf.format(u.total_checkins);
+  $('mStreak').textContent = u.streak;
+  $('mBest').textContent = u.best_streak;
+  $('mHistory').innerHTML = (hist||[]).map(h => `<li>${fmtDate(h.created_at)}</li>`).join('') || '<li>Sin registros.</li>';
+  $('modal').classList.add('open');
   $('mClose').focus();
+  return true;
 }
-const closeModal = () => { $('modal').classList.add('hidden'); $('modal').classList.remove('flex'); };
+const closeModal = () => $('modal').classList.remove('open');
 $('mClose').onclick = closeModal;
-$('modal').addEventListener('click', e => { if(e.target===$('modal')) closeModal(); });
-document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+$('modal').addEventListener('click', (e) => { if(e.target === $('modal')) closeModal(); });
+document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeModal(); });
 
-/* ---------- Realtime leaderboard ---------- */
+/* ---------- tiempo real ---------- */
 let refreshTimer;
 const scheduleRefresh = () => { clearTimeout(refreshTimer); refreshTimer = setTimeout(loadBoard, 400); };
 db.channel('users-feed')
-  .on('postgres_changes',{event:'*',schema:'public',table:'users'}, payload => {
-    flashName = payload.new?.username; scheduleRefresh();
+  .on('postgres_changes', {event:'*', schema:'public', table:'users'}, (p) => {
+    flashName = p.new?.username; scheduleRefresh();
   })
-  .subscribe();
-setInterval(loadBoard, 60000);   // fallback polling + refreshes "x min atrás"
-
-/* ---------- Kick chat listener (only when URL has ?listen=1) ---------- */
-const LISTEN = new URLSearchParams(location.search).get('listen') === '1';
-const recentAttempts = new Map();      // username -> timestamp, avoids hammering the DB
-
-async function handleChat(msg){
-  const content = (msg?.content || '').trim();
-  const sender  = msg?.sender;
-  if(!sender?.slug || !content.toLowerCase().startsWith(CONFIG.COMMAND)) return;
-  if(content.length > CONFIG.COMMAND.length && !/\s/.test(content[CONFIG.COMMAND.length])) return; // "!presentexyz"
-
-  const user = sender.slug.toLowerCase();
-  const last = recentAttempts.get(user) || 0;
-  if(Date.now() - last < 60_000) return;           // local throttle: 1 try/min per user
-  recentAttempts.set(user, Date.now());
-
-  const { data, error } = await db.rpc('register_presente',{ p_username: user, p_display: sender.username });
-  if(error){ console.error('RPC error', error); return; }
-  if(data.ok){
-    console.log(`✅ ${sender.username}: ${data.total} presenças, sequência ${data.streak}`);
-    flashName = user; scheduleRefresh();
-  } else {
-    console.log(`⏳ ${sender.username}: ${data.reason}`, data.retry_in_seconds ?? '');
-  }
-}
-
-function startKick(){
-  const pusher = new Pusher(CONFIG.PUSHER_KEY, { cluster: CONFIG.PUSHER_CLUSTER, forceTLS: true });
-  pusher.connection.bind('connected', () => setStatus('Chat conectado','#53fc18'));
-  pusher.connection.bind('disconnected', () => setStatus('Chat desconectado','#f59e0b'));
-  pusher.connection.bind('error', () => setStatus('Erro no chat','#ef4444'));
-  const ch = pusher.subscribe(`chatrooms.${CONFIG.KICK_CHATROOM_ID}.v2`);
-  ch.bind('App\\Events\\ChatMessageEvent', (evt) => {
-    let msg = evt; if(typeof evt === 'string'){ try{ msg = JSON.parse(evt); }catch{ return; } }
-    handleChat(msg);
+  .subscribe((status) => {
+    if(status === 'SUBSCRIBED') setStatus('Actualización en tiempo real','#53fc18');
+    else if(['CHANNEL_ERROR','TIMED_OUT','CLOSED'].includes(status)) setStatus('Reconectando…','#f59e0b');
   });
-}
+setInterval(loadBoard, 60000);   // respaldo + refresca los «hace X min»
 
-/* ---------- boot ---------- */
 loadBoard();
-if(LISTEN){
-  $('liveNote').textContent = 'Modo escucha activo: mantenga esta para registrar presentes.';
-  startKick();
-} else {
-  setStatus('Ranking en vivo','#53fc18');
-  $('liveNote').textContent = 'Actualiza en tiempo real.';
-}
 </script>
 </body>
 </html>
