@@ -247,7 +247,7 @@ document.addEventListener('error', (e) => {
 }, true);
 
 $('chan').textContent = CONFIG.CHANNEL_NAME;
-document.title = `Ranking de presencia · ${CONFIG.CHANNEL_NAME}`;
+document.title = `Ranking de presentes · ${CONFIG.CHANNEL_NAME}`;
 
 /* ---------- Supabase ---------- */
 const db = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
