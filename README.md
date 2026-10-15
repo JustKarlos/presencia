@@ -112,37 +112,6 @@ const CONFIG = {
 };
 ```
 
-## Publicar en GitHub
-
-```bash
-git init
-git add .
-git commit -m "Ranking de presencia para Kick"
-git branch -M main
-git remote add origin https://github.com/TU-USUARIO/TU-REPO.git
-git push -u origin main
-```
-
-> **Nunca subas** el Client Secret, la service role key ni el `SETUP_KEY`. Esos valores van solo en los Secrets de Supabase. La URL del proyecto y la `anon key` sí pueden estar en `index.html`.
-
-### GitHub Pages
-
-1. En el repo: **Settings → Pages**.
-2. En *Source* elegí **Deploy from a branch**, rama `main`, carpeta `/ (root)`.
-3. Guardá. En un par de minutos el sitio estará en `https://TU-USUARIO.github.io/TU-REPO/`.
-
-### Vercel (alternativa)
-
-1. En [vercel.com](https://vercel.com) elegí **Add New → Project** e importá el repo.
-2. *Framework Preset*: **Other**. Sin build command ni output directory.
-3. Desplegá.
-
-## Probar que funciona
-
-1. Ponete en directo (o poné `REQUIRE_LIVE=false` en los Secrets).
-2. Escribí `!presente` en tu chat.
-3. Mirá el ranking: tu usuario debería aparecer con 1 presencia.
-4. Si no pasa nada, revisá **Edge Functions → kick-webhook → Logs**.
 
 ## Solución de problemas
 
@@ -154,13 +123,3 @@ git push -u origin main
 | El paso 5 devuelve un error de cuenta | Mostrará los scopes y las respuestas de Kick. Iniciá sesión con la cuenta del streamer y revisá los scopes de la app. |
 | El ranking no se actualiza solo | Verificá que `schema.sql` se ejecutó completo (incluye `alter publication supabase_realtime ...`). Igual hay refresco automático cada 60 s. |
 | No llegan webhooks | Revisá que los webhooks estén activados en la app de Kick y que la URL sea exacta. Kick desuscribe la app tras fallos repetidos: repetí el paso 5. |
-
-## Limitaciones
-
-- La API de webhooks de Kick no está bajo mi control y puede cambiar. Este proyecto se escribió contra librerías de terceros y no contra una prueba real con tu canal.
-- Los proyectos gratuitos de Supabase se pausan tras aproximadamente una semana sin actividad.
-- Los nombres de usuario se normalizan a minúsculas con el `channel_slug` de Kick.
-
-## Licencia
-
-MIT, o la que prefieras. Agregá un archivo `LICENSE` al repo.
