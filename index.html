@@ -3,55 +3,50 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ranking de presentes</title>
+<title>Ranking de presencia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <style>
-:root{
-  --bg:#0b0e0f; --surface:#12181a; --surface-2:#182022; --line:#222d30;
-  --text:#e9eeec; --muted:#8b9c98; --kick:#53fc18; --kick-ink:#07210a;
-  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
-  --body:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
-}
+:root{--bg:#0b0e0f;--s1:#12181a;--s2:#182022;--line:#222d30;--text:#e9eeec;--muted:#8b9c98;--kick:#53fc18;--ink:#07210a;
+  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;--body:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
 *{box-sizing:border-box;margin:0}
-html{background:var(--bg)}
-body{background:radial-gradient(900px 380px at 50% -120px,rgba(83,252,24,.10),transparent 70%),var(--bg);
-  color:var(--text);font-family:var(--body);line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased}
+body{background:radial-gradient(900px 380px at 50% -120px,rgba(83,252,24,.10),transparent 70%),var(--bg);color:var(--text);
+  font-family:var(--body);line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;text-align:inherit}
-:focus-visible{outline:2px solid var(--kick);outline-offset:3px;border-radius:8px}
-.wrap{max-width:760px;margin:0 auto;padding:0 1rem}
+:focus-visible{outline:2px solid var(--kick);outline-offset:2px;border-radius:8px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 1rem 3rem}
+[hidden]{display:none!important}
 
-/* Cabecera */
-header{padding:2.5rem 0 1.25rem}
-.top{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap}
-h1{font-family:var(--display);font-weight:800;font-size:clamp(2.2rem,7vw,3.4rem);line-height:1.02;letter-spacing:-.02em;word-break:break-word}
-.sub{color:var(--muted);margin-top:.35rem;font-size:1.05rem}
-.status{display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:var(--muted);background:var(--surface);
-  border:1px solid var(--line);border-radius:999px;padding:.35rem .8rem}
+header{padding:2.2rem 0 1rem;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(2.1rem,6vw,3.2rem);line-height:1.02;letter-spacing:-.02em;word-break:break-word}
+.sub{color:var(--muted);font-size:1.05rem;margin-top:.3rem}
+.status{display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:var(--muted);background:var(--s1);border:1px solid var(--line);border-radius:999px;padding:.35rem .8rem}
 .dot{width:8px;height:8px;border-radius:50%;background:#5b6a67}
-.how{margin-top:1.1rem;padding:.85rem 1rem;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--kick);
-  border-radius:10px;color:#c7d3cf;font-size:.95rem}
-.how code{font-family:var(--display);font-weight:600;color:var(--kick);font-size:1.02rem}
-.search{margin-top:1rem;position:relative}
-.search svg{position:absolute;left:.9rem;top:50%;transform:translateY(-50%);color:var(--muted)}
-.search input{width:100%;padding:.8rem 1rem .8rem 2.6rem;background:var(--surface);border:1px solid var(--line);border-radius:12px;
-  color:var(--text);font:inherit;outline:none}
-.search input:focus{border-color:var(--kick)}
-.search input::placeholder{color:#62726e}
+.how{padding:.8rem 1rem;background:var(--s1);border:1px solid var(--line);border-left:3px solid var(--kick);border-radius:10px;color:#c7d3cf;font-size:.93rem}
+.how code{font-family:var(--display);font-weight:600;color:var(--kick)}
+
+/* Tarjetas de resumen */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin:1.1rem 0 0}
+.stat{background:var(--s1);border:1px solid var(--line);border-radius:14px;padding:1rem}
+.stat .lb{display:flex;align-items:center;gap:.4rem;color:var(--muted);font-size:.82rem}
+.stat .lb svg{color:var(--kick);flex:none}
+.stat b{display:block;font-family:var(--display);font-weight:800;font-size:2rem;line-height:1.15;margin-top:.35rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stat small{color:var(--muted);font-size:.8rem;display:flex;align-items:center;gap:.4rem;min-height:1.4rem}
+.stat small i{font-style:normal;color:var(--kick);font-weight:700}
 
 /* Podio */
-.podium{display:flex;align-items:flex-end;justify-content:center;gap:.6rem;margin:2rem 0 1.5rem}
-.pod{flex:1;max-width:230px;display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0}
-.pod .who{margin:.6rem 0 .75rem;min-width:0;width:100%}
+.podium{display:flex;align-items:flex-end;justify-content:center;gap:.6rem;margin:2rem auto 1.5rem;max-width:640px}
+.pod{flex:1;max-width:220px;display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0}
+.pod .who{margin:.6rem 0 .7rem;min-width:0;width:100%}
 .pod .nm{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
-.pod .pts{color:var(--muted);font-size:.85rem}
-.plinth{width:100%;display:grid;place-items:center;font-family:var(--display);font-weight:800;border-radius:12px 12px 0 0;
-  background:var(--surface-2);color:#51615d;border:1px solid var(--line);border-bottom:0}
-.p1 .plinth{height:82px;font-size:3rem;background:var(--kick);color:var(--kick-ink);border-color:var(--kick)}
-.p2 .plinth{height:58px;font-size:2.1rem}
-.p3 .plinth{height:42px;font-size:1.6rem}
+.pod .pts{color:var(--muted);font-size:.85rem;display:block}
+.pod .tag{display:inline-block;font-size:.7rem;font-weight:700;border-radius:999px;padding:.05rem .55rem;margin-bottom:.25rem;background:var(--s2);color:var(--muted);border:1px solid var(--line)}
+.p1 .tag{background:rgba(83,252,24,.14);color:var(--kick);border-color:rgba(83,252,24,.35)}
+.plinth{width:100%;display:grid;place-items:center;font-family:var(--display);font-weight:800;border-radius:12px 12px 0 0;background:var(--s2);color:#51615d;border:1px solid var(--line);border-bottom:0}
+.p1 .plinth{height:82px;font-size:3rem;background:var(--kick);color:var(--ink);border-color:var(--kick)}
+.p2 .plinth{height:58px;font-size:2.1rem}.p3 .plinth{height:42px;font-size:1.6rem}
 .p1 .av{box-shadow:0 0 0 3px var(--bg),0 0 0 6px var(--kick)}
 .p2 .av,.p3 .av{box-shadow:0 0 0 3px var(--bg),0 0 0 5px #35443f}
 .pod:hover .nm{color:var(--kick)}
@@ -59,47 +54,76 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(2.2rem,7vw,3.4rem)
 .rise .p2 .plinth{animation-delay:.05s}.rise .p3 .plinth{animation-delay:.12s}
 @keyframes rise{from{transform:scaleY(0)}to{transform:scaleY(1)}}
 
-/* Lista */
-.listhead{display:flex;justify-content:space-between;align-items:baseline;margin:.5rem 0 .4rem;color:var(--muted);font-size:.85rem}
-.list{list-style:none;padding:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface)}
-.row{width:100%;display:flex;align-items:center;gap:.8rem;padding:.7rem 1rem;border-bottom:1px solid var(--line)}
+/* Zona principal */
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:1.25rem;align-items:start}
+.tabs{display:flex;gap:.3rem;background:var(--s1);border:1px solid var(--line);border-radius:12px;padding:.25rem;overflow-x:auto}
+.tab{flex:1;white-space:nowrap;text-align:center;padding:.5rem .8rem;border-radius:9px;color:var(--muted);font-weight:500;font-size:.92rem}
+.tab:hover{color:var(--text)}
+.tab.on{background:var(--kick);color:var(--ink);font-weight:700}
+.bar{display:flex;gap:.5rem;flex-wrap:wrap;margin:.75rem 0;align-items:center}
+.chips{display:flex;gap:.35rem;flex-wrap:wrap}
+.off{opacity:.35;pointer-events:none}
+.chip{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .8rem;border:1px solid var(--line);border-radius:999px;font-size:.85rem;color:var(--muted);background:var(--s1)}
+.chip:hover{color:var(--text);border-color:#35443f}
+.chip.on{border-color:var(--kick);color:var(--kick)}
+.pw{position:relative}
+.pop{position:absolute;top:calc(100% + .4rem);left:0;z-index:20;background:var(--s2);border:1px solid var(--line);border-radius:12px;padding:.9rem;width:240px;display:grid;gap:.6rem;box-shadow:0 12px 30px rgba(0,0,0,.5)}
+.pop label{font-size:.8rem;color:var(--muted);display:grid;gap:.2rem}
+.pop input{background:var(--bg);border:1px solid var(--line);border-radius:8px;color:var(--text);padding:.45rem .6rem;font:inherit;color-scheme:dark}
+.pop .acts{display:flex;gap:.5rem}
+.btn{padding:.45rem .9rem;border-radius:8px;background:var(--kick);color:var(--ink);font-weight:700;font-size:.85rem}
+.btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}
+.search{position:relative;flex:1;min-width:180px}
+.search svg{position:absolute;left:.8rem;top:50%;transform:translateY(-50%);color:var(--muted)}
+.search input{width:100%;padding:.55rem 1rem .55rem 2.3rem;background:var(--s1);border:1px solid var(--line);border-radius:999px;color:var(--text);font:inherit;outline:none}
+.search input:focus{border-color:var(--kick)}
+.search input::placeholder{color:#62726e}
+.listhead{display:flex;justify-content:space-between;color:var(--muted);font-size:.85rem;margin:.2rem 0 .4rem}
+.list{list-style:none;padding:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--s1)}
+.row{width:100%;display:flex;align-items:center;gap:.8rem;padding:.65rem 1rem;border-bottom:1px solid var(--line)}
 .list li:last-child .row{border-bottom:0}
-.row:hover{background:var(--surface-2)}
+.row:hover,.fi:hover{background:var(--s2)}
 .rk{width:2rem;text-align:right;font-family:var(--display);font-weight:600;color:var(--muted);flex:none}
 .info{flex:1;min-width:0}
 .info b{display:block;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .info small{color:var(--muted);font-size:.8rem}
-.streak{display:inline-flex;align-items:center;gap:.25rem;font-size:.78rem;font-weight:700;color:#ffb347;
-  background:rgba(255,179,71,.12);border-radius:999px;padding:.15rem .55rem;white-space:nowrap}
-.total{font-family:var(--display);font-weight:800;font-size:1.25rem;min-width:2.5rem;text-align:right}
-.total small{display:block;font-family:var(--body);font-weight:400;font-size:.68rem;color:var(--muted);margin-top:-.2rem}
-.empty{padding:2.5rem 1rem;text-align:center;color:var(--muted)}
-.note{color:#62726e;font-size:.78rem;margin:.9rem 0 3rem}
+.total{font-family:var(--display);font-weight:800;font-size:1.05rem;text-align:right;white-space:nowrap}
+.empty{padding:2.5rem 1rem;text-align:center;color:var(--muted);background:var(--s1);border:1px solid var(--line);border-radius:14px}
+.note{color:#62726e;font-size:.78rem;margin-top:.8rem}
 
-/* Avatares */
-.av{display:inline-grid;place-items:center;border-radius:50%;object-fit:cover;flex:none;font-family:var(--display);font-weight:800;color:#dfe9e5;background:var(--surface-2)}
+/* Actividad en vivo */
+.feed{background:var(--s1);border:1px solid var(--line);border-radius:14px;padding:.9rem .5rem .5rem;position:sticky;top:1rem}
+.feed h2{font-family:var(--display);font-size:1.15rem;padding:0 .6rem .6rem;display:flex;align-items:center;gap:.5rem}
+.live{width:8px;height:8px;border-radius:50%;background:var(--kick);animation:pulse 1.8s infinite}
+@keyframes pulse{50%{opacity:.35}}
+.feed ul{list-style:none;padding:0;max-height:520px;overflow-y:auto}
+.fi{width:100%;display:flex;gap:.6rem;align-items:center;padding:.5rem .6rem;border-radius:10px}
+.fi span.t{min-width:0;font-size:.86rem;line-height:1.3}
+.fi b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fi small{color:var(--muted);display:block}
+
+.av{display:inline-grid;place-items:center;border-radius:50%;object-fit:cover;flex:none;font-family:var(--display);font-weight:800;color:#dfe9e5;background:var(--s2)}
 
 /* Modal */
 .modal{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:1rem}
 .modal.open{display:flex}
-.card{position:relative;width:100%;max-width:420px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:1.5rem}
+.card{position:relative;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;background:var(--s1);border:1px solid var(--line);border-radius:18px;padding:1.4rem}
 .close{position:absolute;top:.6rem;right:.9rem;font-size:1.7rem;color:var(--muted);line-height:1}
-.close:hover{color:#fff}
-.mh{display:flex;gap:1rem;align-items:center;margin-bottom:1.2rem;padding-right:1.5rem}
+.mh{display:flex;gap:1rem;align-items:center;margin-bottom:1.1rem;padding-right:1.5rem}
 .mh h2{font-family:var(--display);font-weight:800;font-size:1.6rem;line-height:1.1;word-break:break-all}
 .mh p{color:var(--muted);font-size:.88rem}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
-.stat{background:var(--bg);border-radius:12px;padding:.7rem .4rem;text-align:center}
-.stat b{display:block;font-family:var(--display);font-weight:800;font-size:1.6rem;line-height:1.1}
-.stat span{font-size:.75rem;color:var(--muted)}
-.card h3{margin:1.2rem 0 .4rem;font-size:.9rem;color:var(--muted);font-weight:500}
-.hist{list-style:none;padding:0;max-height:160px;overflow-y:auto;font-size:.9rem;color:#c7d3cf}
-.hist li{padding:.25rem 0;border-bottom:1px solid var(--line)}
+.pairs{display:grid;gap:.5rem}
+.pair{display:grid;grid-template-columns:1fr 1fr;background:var(--bg);border:1px solid var(--line);border-radius:12px}
+.pair div{padding:.6rem .8rem}
+.pair div+div{border-left:1px solid var(--line)}
+.pair span{display:block;font-size:.74rem;color:var(--muted)}
+.pair b{display:block;font-family:var(--display);font-weight:800;font-size:1.25rem;line-height:1.25}
 
 .flash{animation:flash 1.6s ease-out}
 @keyframes flash{from{background:rgba(83,252,24,.25)}to{background:transparent}}
-@media (prefers-reduced-motion:reduce){.flash,.rise .plinth{animation:none}}
-@media (max-width:420px){.pod .pts{font-size:.75rem}.p1 .av{width:80px!important;height:80px!important}.p2 .av,.p3 .av{width:58px!important;height:58px!important}}
+@media (prefers-reduced-motion:reduce){.flash,.rise .plinth,.live{animation:none}}
+@media (max-width:900px){.layout{grid-template-columns:1fr}.feed{position:static}.stats{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:420px){.stat b{font-size:1.6rem}.p1 .av{width:80px!important;height:80px!important}.p2 .av,.p3 .av{width:58px!important;height:58px!important}.tab{padding:.5rem .6rem}}
 </style>
 </head>
 <body>
@@ -109,52 +133,76 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(2.2rem,7vw,3.4rem)
 const CONFIG = {
   SUPABASE_URL:      "https://nlgkpoomhgehuabrkwhp.supabase.co",
   SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5sZ2twb29taGdlaHVhYnJrd2hwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE3NjE3NzAsImV4cCI6MjEwNzMzNzc3MH0.DM1cUzclLbu8ej8m7PAQEja6X20gBadNiuqMEzbk-_g",
-  CHANNEL_NAME:      "OptiMaquina",   // se muestra como título
-  LEADERBOARD_SIZE:  50,
+  CHANNEL_NAME:      "OptiMaquina",
 };
 /* ================================================================ */
 </script>
 
 <div class="wrap">
   <header>
-    <div class="top">
-      <div>
-        <h1 id="chan"></h1>
-        <p class="sub">Ranking de presentes</p>
-      </div>
-      <div class="status" role="status"><span class="dot" id="dot"></span><span id="statusTxt">Conectando…</span></div>
-    </div>
-    <p class="how">Escribe <code>!presente</code> en el chat durante el directo. Sumas 1 punto cada hora y tu racha crece por cada día seguido que participes.</p>
-    <label class="search">
-      <span class="sr" style="position:absolute;left:-9999px">Buscar usuario</span>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-      <input id="search" type="search" placeholder="Buscar por usuario…" autocomplete="off">
-    </label>
+    <div><h1 id="chan"></h1><p class="sub">Ranking de la comunidad</p></div>
+    <div class="status" role="status"><span class="dot" id="dot"></span><span id="statusTxt">Conectando…</span></div>
   </header>
+  <p class="how">Escribe <code>!presente</code> en el chat durante el directo. Sumas 1 punto cada hora y tu racha crece por cada día seguido que participes.</p>
 
-  <main>
-    <section id="podium" class="podium" aria-label="Los tres primeros puestos"></section>
-    <div class="listhead"><span id="count"></span></div>
-    <ul id="board" class="list"></ul>
-    <p id="empty" class="empty" hidden></p>
-    <p class="note">Las presencias solo cuentan mientras el canal está en directo.</p>
-  </main>
+  <section class="stats" aria-label="Resumen">
+    <div class="stat"><div class="lb"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Total de presentes</div><b id="c1">–</b><small id="c1s">&nbsp;</small></div>
+    <div class="stat"><div class="lb"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-5.4A8 8 0 1 1 21 12z"/></svg>Total de mensajes</div><b id="c2">–</b><small id="c2s">&nbsp;</small></div>
+    <div class="stat"><div class="lb"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-3.5 3-5.5 6.5-5.5s6 2 6.5 5.5M16 4.8a3.5 3.5 0 0 1 0 6.4M18 14.8c2 .6 3.3 2.3 3.5 5"/></svg>Usuarios del chat</div><b id="c3">–</b><small id="c3s">&nbsp;</small></div>
+    <div class="stat"><div class="lb"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 4-2 5-2 8a3 3 0 006 0c0-1-.5-2-1-3 3 1 5 4 5 7a8 8 0 01-16 0c0-5 4-7 8-12z"/></svg>Mejor racha activa</div><b id="c4">–</b><small id="c4s">&nbsp;</small></div>
+  </section>
+
+  <section id="podium" class="podium" aria-label="Los tres primeros puestos"></section>
+
+  <div class="layout">
+    <main>
+      <div class="tabs" id="tabs" role="tablist">
+        <button class="tab on" role="tab" data-m="presentes">Presentes</button>
+        <button class="tab" role="tab" data-m="messages">Mensajes</button>
+        <button class="tab" role="tab" data-m="active">Tiempo activo</button>
+        <button class="tab" role="tab" data-m="streaks">Rachas</button>
+      </div>
+      <div class="bar">
+        <div class="chips" id="chips">
+          <button class="chip on" data-r="all">General</button>
+          <button class="chip" data-r="today">Hoy</button>
+          <button class="chip" data-r="7d">7 días</button>
+          <button class="chip" data-r="30d">30 días</button>
+        </div>
+        <div class="pw">
+          <button class="chip" id="dateBtn" aria-haspopup="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+            <span id="dateLbl">Fecha</span>
+          </button>
+          <div class="pop" id="pop" hidden>
+            <label>Desde<input type="date" id="dFrom"></label>
+            <label>Hasta<input type="date" id="dTo"></label>
+            <div class="acts"><button class="btn" id="dApply">Aplicar</button><button class="btn ghost" id="dClear">Limpiar</button></div>
+          </div>
+        </div>
+        <label class="search"><span style="position:absolute;left:-9999px">Buscar usuario</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="search" type="search" placeholder="Buscar usuario…" autocomplete="off">
+        </label>
+      </div>
+      <div class="listhead"><span id="count"></span><span id="period"></span></div>
+      <ul id="board" class="list"></ul>
+      <p id="empty" class="empty" hidden></p>
+      <p class="note" id="note"></p>
+    </main>
+
+    <aside class="feed" aria-label="Actividad en vivo">
+      <h2><span class="live"></span>Últimos presentes</h2>
+      <ul id="feed"></ul>
+    </aside>
+  </div>
 </div>
 
 <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="mName">
   <div class="card">
     <button id="mClose" class="close" aria-label="Cerrar">&times;</button>
-    <div class="mh">
-      <span id="mAvatar"></span>
-      <div><h2 id="mName"></h2><p id="mRank"></p></div>
-    </div>
-    <div class="stats">
-      <div class="stat"><b id="mTotal"></b><span>Presentes</span></div>
-      <div class="stat"><b id="mStreak"></b><span>Racha actual</span></div>
-      <div class="stat"><b id="mBest"></b><span>Mejor racha</span></div>
-    </div>
-    <h3>Últimos presentes</h3>
-    <ul id="mHistory" class="hist"></ul>
+    <div class="mh"><span id="mAvatar"></span><div><h2 id="mName"></h2><p id="mSub"></p></div></div>
+    <div class="pairs" id="pairs"></div>
   </div>
 </div>
 
@@ -162,9 +210,8 @@ const CONFIG = {
 /* ---------- utilidades ---------- */
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const nf = new Intl.NumberFormat('es-AR');
-const plural = (n, one, many) => n === 1 ? one : many;
-const fmtDate = (iso) => iso ? new Date(iso).toLocaleString('es-AR',{dateStyle:'medium',timeStyle:'short'}) : '—';
+const nf = (n) => new Intl.NumberFormat('es-AR').format(Number(n) || 0);
+const plural = (n, a, b) => Number(n) === 1 ? a : b;
 function ago(iso){
   if(!iso) return 'Sin registros';
   const s = Math.max(0,(Date.now()-new Date(iso))/1000);
@@ -174,17 +221,18 @@ function ago(iso){
   const d = Math.floor(s/86400);
   return `hace ${d} ${plural(d,'día','días')}`;
 }
-function setStatus(txt, color){ $('statusTxt').textContent = txt; $('dot').style.background = color; }
+const fmtMin = (m) => { m = Number(m)||0; return m < 60 ? `${m} min` : `${Math.floor(m/60)} h ${m%60} min`; };
+const fmtDay = (iso) => iso ? new Date(iso).toLocaleDateString('es-AR',{day:'numeric',month:'long',year:'numeric'}) : '—';
+const dm = (d) => d.split('-').reverse().slice(0,2).join('/');
+function setStatus(t, c){ $('statusTxt').textContent = t; $('dot').style.background = c; }
 const hue = (s) => { let h = 0; for(const c of s) h = (h*31 + c.charCodeAt(0)) % 360; return h; };
 
-/* Avatar: imagen de Kick o, si falta o falla, un círculo con las iniciales */
 function avatar(u, size){
   const ini = esc((u.display_name || u.username).trim().slice(0,2).toUpperCase());
   const h = hue(u.username);
   const st = `width:${size}px;height:${size}px;font-size:${Math.round(size*.38)}px`;
-  if(u.avatar_url && /^https:\/\//.test(u.avatar_url)){
+  if(u.avatar_url && /^https:\/\//.test(u.avatar_url))
     return `<img class="av" style="${st}" src="${esc(u.avatar_url)}" alt="" loading="lazy" referrerpolicy="no-referrer" data-ini="${ini}" data-h="${h}">`;
-  }
   return `<span class="av" style="${st};background:hsl(${h} 30% 24%)">${ini}</span>`;
 }
 document.addEventListener('error', (e) => {
@@ -198,127 +246,184 @@ document.addEventListener('error', (e) => {
   }
 }, true);
 
-const flame = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c1 4-2 5-2 8a3 3 0 006 0c0-1-.5-2-1-3 3 1 5 4 5 7a8 8 0 01-16 0c0-5 4-7 8-12z"/></svg>';
-const streakPill = (n) => n >= 2 ? `<span class="streak">${flame}${n} ${plural(n,'día','días')}</span>` : '';
-
 $('chan').textContent = CONFIG.CHANNEL_NAME;
-document.title = `Ranking de presentes · ${CONFIG.CHANNEL_NAME}`;
+document.title = `Ranking de presencia · ${CONFIG.CHANNEL_NAME}`;
 
 /* ---------- Supabase ---------- */
 const db = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
-let rows = [];
-let flashName = null;
-let firstRender = true;
+async function rpc(fn, args){
+  const { data, error } = await db.rpc(fn, args);
+  if(error){ console.error(fn, error); setStatus('Error al cargar datos','#ef4444'); return null; }
+  return data;
+}
 
+const st = { metric:'presentes', range:'all', from:null, to:null };
+let rows = [], feedRows = [], reqId = 0, firstRender = true;
+
+const UNITS = { presentes:['presente','presentes'], messages:['mensaje','mensajes'], streaks:['día','días'] };
+function fmtVal(metric, v){
+  if(metric === 'active') return fmtMin(v);
+  const [a,b] = UNITS[metric];
+  return `${nf(v)} ${plural(v,a,b)}`;
+}
+
+/* ---------- tarjetas de resumen ---------- */
+async function loadSummary(){
+  const s = await rpc('get_summary'); if(!s) return;
+  $('c1').textContent = nf(s.total_presentes);  $('c1s').innerHTML = `<i>${nf(s.presentes_today)}</i> hoy`;
+  $('c2').textContent = nf(s.total_messages);   $('c2s').innerHTML = `<i>${nf(s.messages_today)}</i> hoy`;
+  $('c3').textContent = nf(s.chat_users);       $('c3s').innerHTML = `<i>${nf(s.active_today)}</i> ${plural(s.active_today,'activo','activos')} hoy`;
+  const b = s.best_streak;
+  $('c4').textContent = b ? `${b.value} ${plural(b.value,'día','días')}` : '—';
+  $('c4s').innerHTML = b ? `${avatar(b,18)}<span>${esc(b.display_name)}</span>` : 'Aún no hay rachas activas';
+}
+
+/* ---------- ranking ---------- */
 async function loadBoard(){
-  const { data, error } = await db.from('users')
-    .select('username,display_name,avatar_url,total_checkins,streak,best_streak,last_presente_at')
-    .order('total_checkins',{ascending:false})
-    .order('last_presente_at',{ascending:false})
-    .limit(CONFIG.LEADERBOARD_SIZE);
-  if(error){ setStatus('No se pudo cargar el ranking','#ef4444'); console.error(error); return; }
+  const id = ++reqId;
+  const data = await rpc('get_leaderboard', { p_metric:st.metric, p_range:st.range, p_from:st.from, p_to:st.to, p_limit:100 });
+  if(id !== reqId || !data) return;      // descarta respuestas viejas
   rows = data; render();
 }
 
-/* ---------- dibujo ---------- */
 function podiumTile(u){
-  return `<button class="pod p${u.rank} ${u.username===flashName?'flash':''}" data-u="${esc(u.username)}">
+  return `<button class="pod p${u.rank}" data-u="${esc(u.username)}">
     ${avatar(u, u.rank===1 ? 96 : 72)}
-    <span class="who"><span class="nm">${esc(u.display_name)}</span>
-      <span class="pts">${nf.format(u.total_checkins)} ${plural(u.total_checkins,'presentes','presentes')}</span></span>
-    <span class="plinth">${u.rank}</span>
-  </button>`;
+    <span class="who"><span class="tag">Top ${u.rank}</span><span class="nm">${esc(u.display_name)}</span>
+      <span class="pts">${fmtVal(st.metric,u.value)}</span></span>
+    <span class="plinth">${u.rank}</span></button>`;
 }
 function rowItem(u){
-  return `<li><button class="row ${u.username===flashName?'flash':''}" data-u="${esc(u.username)}">
-    <span class="rk">${u.rank}</span>
-    ${avatar(u, 40)}
-    <span class="info"><b>${esc(u.display_name)}</b><small>${ago(u.last_presente_at)}</small></span>
-    ${streakPill(u.streak)}
-    <span class="total">${nf.format(u.total_checkins)}<small>${plural(u.total_checkins,'presente','presentes')}</small></span>
-  </button></li>`;
+  const sub = st.metric === 'streaks' ? `Mejor racha: ${u.best_streak} ${plural(u.best_streak,'día','días')}` : ago(u.last_seen);
+  return `<li><button class="row" data-u="${esc(u.username)}"><span class="rk">${u.rank}</span>${avatar(u,40)}
+    <span class="info"><b>${esc(u.display_name)}</b><small>${sub}</small></span>
+    <span class="total">${fmtVal(st.metric,u.value)}</span></button></li>`;
 }
 
 function render(notFound){
   const q = $('search').value.trim().toLowerCase();
   const all = rows.map((u,i) => ({...u, rank:i+1}));
-  const filtered = q ? all.filter(u => u.username.includes(q) || u.display_name.toLowerCase().includes(q)) : all;
-  const usePodium = !q && all.length >= 3;
 
   const pod = $('podium');
-  pod.hidden = !usePodium;
-  if(usePodium){
-    const [a,b,c] = all;
-    pod.className = 'podium' + (firstRender ? ' rise' : '');
-    pod.innerHTML = [b,a,c].map(podiumTile).join('');
-    firstRender = false;
-  }
+  const top = [all[1], all[0], all[2]].filter(Boolean);
+  pod.hidden = top.length === 0;
+  pod.className = 'podium' + (firstRender ? ' rise' : '');
+  pod.innerHTML = top.map(podiumTile).join('');
+  if(top.length) firstRender = false;
 
-  const list = usePodium ? all.slice(3) : filtered;
+  const list = q ? all.filter(u => u.username.includes(q) || u.display_name.toLowerCase().includes(q)) : all.slice(3);
   $('board').innerHTML = list.map(rowItem).join('');
   $('board').hidden = list.length === 0;
-  $('count').textContent = q ? `${filtered.length} ${plural(filtered.length,'resultado','resultados')}`
-                             : `${all.length} ${plural(all.length,'participante','participantes')}`;
+  $('count').textContent = q ? `${list.length} ${plural(list.length,'resultado','resultados')}` : `${all.length} ${plural(all.length,'participante','participantes')}`;
+  $('period').textContent = st.metric === 'streaks' ? 'Rachas activas'
+    : st.range === 'custom' ? `${dm(st.from)} – ${dm(st.to)}` : { all:'General', today:'Hoy', '7d':'Últimos 7 días', '30d':'Últimos 30 días' }[st.range];
 
   const empty = $('empty');
-  const nothing = q ? filtered.length === 0 : all.length === 0;
+  const nothing = q ? list.length === 0 : all.length === 0;
   empty.hidden = !nothing;
-  if(nothing){
-    empty.textContent = notFound ? `No encontramos a «${notFound}». Prueba con el nombre de usuario exacto.`
-      : q ? 'Nadie coincide con tu búsqueda. Pulsa Enter para buscar el usuario exacto.'
-          : 'Aún no hay presentes. Escribe !presente en el chat durante el próximo directo.';
-  }
-  flashName = null;
+  if(nothing) empty.textContent = notFound ? `No encontramos a «${notFound}». Prueba con el nombre de usuario exacto.`
+    : q ? 'Nadie coincide. Pulsa Enter para buscar el usuario exacto.'
+        : 'Todavía no hay datos para esta categoría y período.';
+  $('note').textContent = st.metric === 'active'
+    ? 'El tiempo activo se calcula con bloques de 5 minutos en los que el usuario escribió en el chat. Kick no entrega el tiempo de visualización real, así que quien mira sin escribir no suma.'
+    : st.metric === 'streaks' ? 'Las rachas cuentan días seguidos con presente y no dependen del período elegido.'
+    : 'Los datos solo se registran mientras el canal está en directo.';
 }
 
-/* ---------- búsqueda y perfil ---------- */
+/* ---------- pestañas, períodos y fecha ---------- */
+$('tabs').addEventListener('click', (e) => {
+  const b = e.target.closest('.tab'); if(!b) return;
+  st.metric = b.dataset.m;
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t === b));
+  $('chips').classList.toggle('off', st.metric === 'streaks');
+  $('dateBtn').parentElement.classList.toggle('off', st.metric === 'streaks');
+  loadBoard();
+});
+function markRange(){
+  document.querySelectorAll('#chips .chip').forEach(c => c.classList.toggle('on', st.range !== 'custom' && c.dataset.r === st.range));
+  $('dateBtn').classList.toggle('on', st.range === 'custom');
+  $('dateLbl').textContent = st.range === 'custom' ? `${dm(st.from)} – ${dm(st.to)}` : 'Fecha';
+}
+$('chips').addEventListener('click', (e) => {
+  const c = e.target.closest('.chip'); if(!c) return;
+  st.range = c.dataset.r; st.from = st.to = null; markRange(); loadBoard();
+});
+$('dateBtn').addEventListener('click', (e) => { e.stopPropagation(); $('pop').hidden = !$('pop').hidden; });
+$('pop').addEventListener('click', (e) => e.stopPropagation());
+document.addEventListener('click', () => { $('pop').hidden = true; });
+$('dApply').onclick = () => {
+  const f = $('dFrom').value, t = $('dTo').value || f;
+  if(!f) return;
+  st.range = 'custom'; st.from = f <= t ? f : t; st.to = f <= t ? t : f;
+  $('pop').hidden = true; markRange(); loadBoard();
+};
+$('dClear').onclick = () => {
+  $('dFrom').value = $('dTo').value = ''; st.range = 'all'; st.from = st.to = null;
+  $('pop').hidden = true; markRange(); loadBoard();
+};
+
+/* ---------- búsqueda ---------- */
 $('search').addEventListener('input', () => render());
 $('search').addEventListener('keydown', async (e) => {
   if(e.key !== 'Enter') return;
-  const q = $('search').value.trim();
-  if(!q) return;
+  const q = $('search').value.trim(); if(!q) return;
   if(!(await openProfile(q))) render(q);
 });
 const pick = (e) => { const b = e.target.closest('[data-u]'); if(b) openProfile(b.dataset.u); };
-$('board').addEventListener('click', pick);
-$('podium').addEventListener('click', pick);
+['board','podium','feed'].forEach(id => $(id).addEventListener('click', pick));
 
+/* ---------- actividad en vivo ---------- */
+async function loadFeed(){
+  const { data, error } = await db.from('check_ins')
+    .select('created_at, users(username,display_name,avatar_url)')
+    .order('created_at', { ascending:false }).limit(15);
+  if(error){ console.error(error); return; }
+  feedRows = data.filter(r => r.users); renderFeed();
+}
+function renderFeed(){
+  $('feed').innerHTML = feedRows.map(r => `<li><button class="fi" data-u="${esc(r.users.username)}">${avatar(r.users,34)}
+    <span class="t"><b>${esc(r.users.display_name)}</b>registró su presente<small>${ago(r.created_at)}</small></span></button></li>`).join('')
+    || '<li class="empty" style="border:0;background:none">Aún no hay presentes.</li>';
+}
+
+/* ---------- perfil ---------- */
 async function openProfile(raw){
   const username = raw.trim().toLowerCase().replace(/^@/, '').replace(/_/g, '-');
-  const { data: u } = await db.from('users').select('*').eq('username', username).maybeSingle();
+  const u = await rpc('get_user_stats', { p_username: username });
   if(!u) return false;
-  const { count } = await db.from('users').select('id',{count:'exact',head:true}).gt('total_checkins', u.total_checkins);
-  const { data: hist } = await db.from('check_ins').select('created_at').eq('user_id', u.id).order('created_at',{ascending:false}).limit(10);
+  const pair = (l1,v1,l2,v2) => `<div class="pair"><div><span>${l1}</span><b>${v1}</b></div><div><span>${l2}</span><b>${v2}</b></div></div>`;
   $('mAvatar').innerHTML = avatar(u, 72);
   $('mName').textContent = u.display_name;
-  $('mRank').textContent = `Puesto n.º ${(count||0)+1} · última vez ${ago(u.last_presente_at)}`;
-  $('mTotal').textContent = nf.format(u.total_checkins);
-  $('mStreak').textContent = u.streak;
-  $('mBest').textContent = u.best_streak;
-  $('mHistory').innerHTML = (hist||[]).map(h => `<li>${fmtDate(h.created_at)}</li>`).join('') || '<li>Sin registros.</li>';
-  $('modal').classList.add('open');
-  $('mClose').focus();
+  $('mSub').textContent = `@${u.username}`;
+  $('pairs').innerHTML = [
+    pair('Mensajes totales', nf(u.total_messages), 'Puesto en el chat', `#${nf(u.chat_rank)}`),
+    pair('Presentes totales', nf(u.total_presentes), 'Puesto en presentes', `#${nf(u.presentes_rank)}`),
+    pair('Mensajes hoy', nf(u.messages_today), 'Mensajes últimos 7 días', nf(u.messages_7d)),
+    pair('Tiempo activo total', fmtMin(u.active_total), 'Puesto en tiempo activo', `#${nf(u.active_rank)}`),
+    pair('Tiempo activo hoy', fmtMin(u.active_today), 'Tiempo activo últimos 7 días', fmtMin(u.active_7d)),
+    pair('Racha actual', `${u.streak} ${plural(u.streak,'día','días')}`, 'Mejor racha', `${u.best_streak} ${plural(u.best_streak,'día','días')}`),
+    pair('Miembro desde', fmtDay(u.member_since), 'Último presente', ago(u.last_presente_at)),
+  ].join('');
+  $('modal').classList.add('open'); $('mClose').focus();
   return true;
 }
 const closeModal = () => $('modal').classList.remove('open');
 $('mClose').onclick = closeModal;
 $('modal').addEventListener('click', (e) => { if(e.target === $('modal')) closeModal(); });
-document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeModal(); });
+document.addEventListener('keydown', (e) => { if(e.key === 'Escape'){ closeModal(); $('pop').hidden = true; } });
 
-/* ---------- tiempo real ---------- */
-let refreshTimer;
-const scheduleRefresh = () => { clearTimeout(refreshTimer); refreshTimer = setTimeout(loadBoard, 400); };
-db.channel('users-feed')
-  .on('postgres_changes', {event:'*', schema:'public', table:'users'}, (p) => {
-    flashName = p.new?.username; scheduleRefresh();
-  })
-  .subscribe((status) => {
-    if(status === 'SUBSCRIBED') setStatus('Actualización en tiempo real','#53fc18');
-    else if(['CHANNEL_ERROR','TIMED_OUT','CLOSED'].includes(status)) setStatus('Reconectando…','#f59e0b');
+/* ---------- tiempo real (solo presentes) y refresco periódico ---------- */
+let timer;
+const refreshSoon = () => { clearTimeout(timer); timer = setTimeout(() => { loadSummary(); loadBoard(); }, 500); };
+db.channel('presentes-feed')
+  .on('postgres_changes', { event:'INSERT', schema:'public', table:'check_ins' }, () => { loadFeed(); refreshSoon(); })
+  .subscribe((s) => {
+    if(s === 'SUBSCRIBED') setStatus('Actualización en tiempo real','#53fc18');
+    else if(['CHANNEL_ERROR','TIMED_OUT','CLOSED'].includes(s)) setStatus('Reconectando…','#f59e0b');
   });
-setInterval(loadBoard, 60000);   // respaldo + refresca los «hace X min»
+setInterval(() => { loadSummary(); loadBoard(); loadFeed(); }, 30000);   // mensajes y tiempo activo se refrescan así
 
-loadBoard();
+loadSummary(); loadBoard(); loadFeed();
 </script>
 </body>
 </html>
