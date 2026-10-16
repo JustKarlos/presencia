@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="es">
 <head>
-<link rel="icon" type="images/png" href="assets/pointer2.png" >
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ranking de presentes</title>
@@ -31,6 +30,7 @@ html {
   min-height: 60vh;
   cursor: url('assets/Cursors.png')16 16, auto;
 }
+
 /* Cursor tipo "pointer" para elementos interactivos */
 a, button, [role="button"], input[type="submit"] {
   cursor: url('assets/pointer.png')16 16, pointer;
@@ -70,9 +70,9 @@ header{padding:1.2rem 0 0;display:grid;grid-template-columns:1fr minmax(0,620px)
 .layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:1rem;align-items:start;margin-top:1rem}
 .panel,.feed,.card{border:22px solid transparent;border-image:url("assets/frame.png") 56/22px stretch;background:linear-gradient(#2b2d2a,#222421) padding-box;padding:.1rem .4rem .5rem}
 .ptitle{font-family:var(--display);font-weight:700;font-size:1.6rem;text-align:center;color:#fff;text-shadow:var(--ol);margin:-.9rem 0 .6rem}
-.tabs{display:flex;gap:.4rem;overflow-x:auto;padding-bottom:2px}
-.tab{flex:1;white-space:nowrap;text-align:center;font-family:var(--display);font-weight:700;font-size:1.15rem;color:#fff;text-shadow:var(--ol);
-  border:12px solid transparent;border-image:url("assets/tab.png") 14 fill/12px stretch;padding:0 .5rem;line-height:1.1}
+.tabs{display:flex;gap:.25rem;overflow-x:auto;padding-bottom:2px}
+.tab{flex:1 1 auto;white-space:nowrap;text-align:center;font-family:var(--display);font-weight:700;font-size:1.05rem;color:#fff;text-shadow:var(--ol);
+  border:12px solid transparent;border-image:url("assets/tab.png") 14 fill/12px stretch;padding:0 .15rem;line-height:1.1}
 .tab:hover{filter:brightness(1.15)}
 .tab.on{border-image-source:url("assets/tab-on.png");color:#fff36a}
 .bar{display:flex;gap:.45rem;flex-wrap:wrap;margin:.7rem 0;align-items:center}
@@ -134,6 +134,37 @@ header{padding:1.2rem 0 0;display:grid;grid-template-columns:1fr minmax(0,620px)
 .pair span{display:block;font-size:.74rem;color:var(--tan)}
 .pair b{display:block;font-family:var(--display);font-weight:700;font-size:1.4rem;line-height:1.2;color:#fff}
 
+
+/* XP, rangos y misiones */
+.spr{image-rendering:pixelated;flex:none;display:inline-block}
+.lvl{display:inline-block;margin-left:.45rem;padding:0 .4rem;border:2px solid #150a03;border-radius:5px;background:#3a2413;color:var(--gold);font-family:var(--display);font-weight:700;font-size:.82rem;line-height:1.25;vertical-align:1px}
+.info small.rk2{display:flex;align-items:center;gap:.3rem;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.xpbar{position:relative;height:24px;border:3px solid #150a03;border-radius:6px;background:#161816;overflow:hidden}
+.xpbar i{position:absolute;inset:0 auto 0 0;width:0;background:repeating-linear-gradient(90deg,#7fe044 0 8px,#5fc02e 8px 16px);box-shadow:inset 0 3px 0 rgba(255,255,255,.35);transition:width 1.1s steps(16,end)}
+.xpbar em{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;font-family:var(--display);font-weight:700;font-size:.95rem;color:#fff;text-shadow:var(--ol)}
+.xpbar.sm{height:20px}.xpbar.sm em{font-size:.85rem}
+.rankrow{display:flex;align-items:center;gap:.7rem;margin-bottom:.55rem}
+.rankrow b{display:block;font-family:var(--display);font-weight:700;font-size:1.4rem;line-height:1.1;color:#fff;text-shadow:var(--ol)}
+.rankrow span{color:var(--tan);font-size:.85rem}
+.xpnote{color:var(--tan);font-size:.8rem;margin:.4rem 0 .9rem}
+.card h3.qh,.qgroup h3{font-family:var(--display);font-weight:700;font-size:1.25rem;color:#fff;text-shadow:var(--ol);margin:1rem 0 .45rem}
+.quests{display:grid;gap:.5rem}
+.quest{background:#1a1c1a;border:2px solid var(--rim);border-radius:10px;padding:.55rem .7rem}
+.quest.done{border-color:#4be01a}
+.qtop{display:flex;justify-content:space-between;gap:.6rem;margin-bottom:.4rem}
+.qt{font-weight:800;font-size:.9rem}
+.qxp{font-family:var(--display);font-weight:700;color:var(--gold);white-space:nowrap}
+.quest small{display:block;color:var(--tan);font-size:.75rem;margin-top:.35rem}
+.qintro{color:var(--tan);font-size:.88rem;margin-bottom:.6rem}
+.qbar{display:flex;margin:.4rem 0}
+#toasts{position:fixed;right:1rem;bottom:1rem;z-index:80;display:grid;gap:.5rem;max-width:calc(100vw - 2rem)}
+.toast{display:flex;gap:.7rem;align-items:center;min-width:240px;max-width:340px;padding:.7rem .9rem;border:3px solid #8a552a;border-radius:12px;background:#2b2d2a;box-shadow:0 0 0 2px #150a03,0 6px 0 #150a03;animation:toastin .5s steps(8,end)}
+.toast b{display:block;font-family:var(--display);font-weight:700;font-size:1.2rem;line-height:1.1;color:var(--gold);text-shadow:var(--ol)}
+.toast span{font-size:.85rem}
+.toast.out{animation:toastout .5s steps(6,end) forwards}
+@keyframes toastin{from{transform:translateX(120%)}to{transform:none}}
+@keyframes toastout{to{transform:translateX(120%);opacity:0}}
+@media (prefers-reduced-motion:reduce){.xpbar i{transition:none}.toast,.toast.out{animation:none}}
 .flash{animation:flash 1.6s ease-out}
 @keyframes flash{from{background:rgba(83,252,24,.28)}to{background:transparent}}
 @media (prefers-reduced-motion:reduce){.flash,.live{animation:none}}
@@ -180,7 +211,10 @@ const CONFIG = {
         <button class="tab" role="tab" data-m="messages">Mensajes</button>
         <button class="tab" role="tab" data-m="active">Tiempo activo</button>
         <button class="tab" role="tab" data-m="streaks">Rachas</button>
+        <button class="tab" role="tab" data-m="xp">Nivel</button>
+        <button class="tab" role="tab" data-m="quests">Misiones</button>
       </div>
+      <div id="rankView">
       <div class="bar">
         <div class="chips" id="chips">
           <button class="chip on" data-r="all">General</button>
@@ -208,6 +242,16 @@ const CONFIG = {
       <ul id="board" class="list"></ul>
       <p id="empty" class="empty" hidden></p>
       <p class="note" id="note"></p>
+      </div>
+      <div id="questView" hidden>
+        <p class="qintro">Las misiones diarias se reinician a medianoche (hora de Buenos Aires) y las semanales cada lunes. Al completarlas ganas XP extra.</p>
+        <div class="qbar"><label class="search"><span class="sr">Tu usuario de Kick</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="qUser" type="search" placeholder="Tu usuario de Kick para ver tu progreso…" autocomplete="off"></label></div>
+        <p class="note" id="qHint"></p>
+        <div class="qgroup"><h3>Misiones diarias</h3><div class="quests" id="qDaily"></div></div>
+        <div class="qgroup"><h3>Misiones semanales</h3><div class="quests" id="qWeekly"></div></div>
+      </div>
     </main>
 
     <aside class="feed" aria-label="Actividad en vivo">
@@ -221,9 +265,14 @@ const CONFIG = {
   <div class="card">
     <button id="mClose" class="close" aria-label="Cerrar">&times;</button>
     <div class="mh"><span id="mAvatar"></span><div><h2 id="mName"></h2><p id="mSub"></p></div></div>
+    <div id="mRankBox"></div>
     <div class="pairs" id="pairs"></div>
+    <h3 class="qh">Misiones</h3>
+    <div class="quests" id="mQuests"></div>
   </div>
 </div>
+
+<div id="toasts" aria-live="polite"></div>
 
 <script>
 /* ---------- utilidades ---------- */
@@ -245,6 +294,29 @@ const fmtDay = (iso) => iso ? new Date(iso).toLocaleDateString('es-AR',{day:'num
 const dm = (d) => d.split('-').reverse().slice(0,2).join('/');
 function setStatus(t, c){ $('statusTxt').textContent = t; $('dot').style.background = c; }
 const hue = (s) => { let h = 0; for(const c of s) h = (h*31 + c.charCodeAt(0)) % 360; return h; };
+
+/* ---------- insignias de rango (sprites 10x10) y títulos ---------- */
+const PAL={o:'#2a1608',g:'#3fd01f',G:'#2f8f17',O:'#ff9a1f',h:'#ffd27a',C:'#35d0ff',c:'#9be9ff',W:'#d9a05b',k:'#150a03',m:'#c0392b',r:'#e0452c',y:'#ffc21a',B:'#a8693a',L:'#f3e7c4'};
+const SPRITES={
+  fruta:["....gg....","...gGg.o..","..oooooo..",".oOOOOOOo.","oOOhOOOOOo","oOhOOOOOOo","oOOOOOOOOo",".oOOOOOOo.","..oOOOOo..","...oooo..."],
+  gema:["..........","..oooooo..",".oCcccCCo.","oCchhcCCCo","oCcCCCCCCo","oCCCCCCCCo",".oCCCCCCo.","..oCCCCo..","...oCCo...","....oo...."],
+  mascara:["..r.yy.r..",".rryyyyrr.","..oWWWWo..",".oWWWWWWo.",".oWkWWkWo.",".oWWWWWWo.",".oWWmmWWo.","..oWmmWo..","...oWWo...","....oo...."],
+  caja:["oooooooooo","oBBBBBBBBo","oBoBBBBoBo","oBBoBBoBBo","oBBBooBBBo","oBBBooBBBo","oBBoBBoBBo","oBoBBBBoBo","oBBBBBBBBo","oooooooooo"],
+  tiempo:[".........." ,"..oooooo..",".oLLLLLLo.","oLLLLkLLLo","oLLLLkLLLo","oLLLLkkkLo","oLLLLLLLLo",".oLLLLLLo.","..oooooo..",".........."]
+};
+const RANKS=[[35,'Maestro del Tiempo','tiempo'],[20,'Rompe Cajas','caja'],[10,'Guardián Aku Aku','mascara'],[5,'Cazador de Gemas','gema'],[0,'Fruta Wumpa','fruta']];
+const rankOf = (lv) => RANKS.find(r => lv >= r[0]);
+const rankKey = (lv) => rankOf(lv)[2];
+const nextTier = (lv) => [...RANKS].reverse().find(r => r[0] > lv);
+const spriteCache = {};
+function sprite(key, size){
+  const k = key + size;
+  if(spriteCache[k]) return spriteCache[k];
+  let r = '';
+  SPRITES[key].forEach((row, y) => [...row].forEach((c, x) => { if(c !== '.') r += `<rect x="${x}" y="${y}" width="1" height="1" fill="${PAL[c]}"/>`; }));
+  return spriteCache[k] = `<svg class="spr" width="${size}" height="${size}" viewBox="0 0 10 10" shape-rendering="crispEdges" aria-hidden="true">${r}</svg>`;
+}
+const normUser = (raw) => String(raw || '').trim().toLowerCase().replace(/^@/, '').replace(/_/g, '-');
 
 function avatar(u, size){
   const ini = esc((u.display_name || u.username).trim().slice(0,2).toUpperCase());
@@ -281,7 +353,7 @@ async function rpc(fn, args){
 const st = { metric:'presentes', range:'all', from:null, to:null };
 let rows = [], feedRows = [], reqId = 0, firstRender = true;
 
-const UNITS = { presentes:['presente','presentes'], messages:['mensaje','mensajes'], streaks:['día','días'] };
+const UNITS = { presentes:['presente','presentes'], messages:['mensaje','mensajes'], streaks:['día','días'], xp:['XP','XP'] };
 function fmtVal(metric, v){
   if(metric === 'active') return fmtMin(v);
   const [a,b] = UNITS[metric];
@@ -315,8 +387,10 @@ function podiumTile(u){
 }
 function rowItem(u){
   const sub = st.metric === 'streaks' ? `Mejor racha: ${u.best_streak} ${plural(u.best_streak,'día','días')}` : ago(u.last_seen);
+  const title = u.rank_title || rankOf(u.level)[1];
   return `<li><button class="row" data-u="${esc(u.username)}"><span class="rk">${u.rank}</span>${avatar(u,40)}
-    <span class="info"><b>${esc(u.display_name)}</b><small>${sub}</small></span>
+    <span class="info"><b>${esc(u.display_name)}<span class="lvl">Nv. ${u.level}</span></b>
+      <small class="rk2">${sprite(rankKey(u.level),14)}<span>${esc(title)} · ${sub}</span></small></span>
     <span class="total">${fmtVal(st.metric,u.value)}</span></button></li>`;
 }
 
@@ -344,6 +418,7 @@ function render(notFound){
         : 'Todavía no hay datos para esta categoría y período.';
   $('note').textContent = st.metric === 'active'
     ? 'El tiempo activo se calcula con bloques de 5 minutos en los que el usuario escribió en el chat. Kick no entrega el tiempo de visualización real, así que quien mira sin escribir no suma.'
+    : st.metric === 'xp' ? 'La XP se gana con cada presente (+100) y con mensajes (+5, uno cada 30 segundos). Las misiones dan XP extra.'
     : st.metric === 'streaks' ? 'Las rachas cuentan días seguidos con presente y no dependen del período elegido.'
     : 'Los datos solo se registran mientras el canal está en directo.';
 }
@@ -351,8 +426,11 @@ function render(notFound){
 /* ---------- pestañas, períodos y fecha ---------- */
 $('tabs').addEventListener('click', (e) => {
   const b = e.target.closest('.tab'); if(!b) return;
-  st.metric = b.dataset.m;
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t === b));
+  const quests = b.dataset.m === 'quests';
+  $('rankView').hidden = quests; $('questView').hidden = !quests;
+  if(quests){ loadQuests(); return; }
+  st.metric = b.dataset.m;
   $('chips').classList.toggle('off', st.metric === 'streaks');
   $('dateBtn').parentElement.classList.toggle('off', st.metric === 'streaks');
   loadBoard();
@@ -404,16 +482,50 @@ function renderFeed(){
     || '<li class="empty" style="border:0;background:none">Aún no hay presentes.</li>';
 }
 
+/* ---------- misiones ---------- */
+function questCard(q, compact){
+  const prog = Math.min(q.progress, q.target), pct = Math.round(prog / q.target * 100);
+  const n = Number(q.completed_by) || 0;
+  return `<div class="quest ${q.completed ? 'done' : ''}"><div class="qtop"><span class="qt">${esc(q.title)}</span><span class="qxp">+${q.xp_reward} XP</span></div>
+    <div class="xpbar sm" role="progressbar" aria-valuemin="0" aria-valuemax="${q.target}" aria-valuenow="${prog}"><i style="width:${pct}%"></i><em>${q.completed ? '¡Completada!' : `${prog}/${q.target}`}</em></div>
+    ${compact ? '' : `<small>${nf(n)} ${plural(n,'usuario completó','usuarios completaron')} esta misión ${q.scope === 'weekly' ? 'esta semana' : 'hoy'}</small>`}</div>`;
+}
+async function loadQuests(){
+  const user = normUser($('qUser').value);
+  const data = await rpc('get_quests', { p_username: user || null });
+  if(!data) return;
+  $('qDaily').innerHTML  = data.filter(q => q.scope === 'daily').map(q => questCard(q)).join('');
+  $('qWeekly').innerHTML = data.filter(q => q.scope === 'weekly').map(q => questCard(q)).join('');
+  $('qHint').textContent = user ? '' : 'Escribe tu usuario de Kick para ver tu progreso personal.';
+}
+let qTimer;
+$('qUser').addEventListener('input', () => {
+  try { localStorage.setItem('kickUser', $('qUser').value.trim()); } catch {}
+  clearTimeout(qTimer); qTimer = setTimeout(loadQuests, 400);
+});
+try { $('qUser').value = localStorage.getItem('kickUser') || ''; } catch {}
+
 /* ---------- perfil ---------- */
 async function openProfile(raw){
-  const username = raw.trim().toLowerCase().replace(/^@/, '').replace(/_/g, '-');
-  const u = await rpc('get_user_stats', { p_username: username });
+  const username = normUser(raw);
+  const [u, qs] = await Promise.all([rpc('get_user_stats', { p_username: username }), rpc('get_quests', { p_username: username })]);
   if(!u) return false;
   const pair = (l1,v1,l2,v2) => `<div class="pair"><div><span>${l1}</span><b>${v1}</b></div><div><span>${l2}</span><b>${v2}</b></div></div>`;
   $('mAvatar').innerHTML = avatar(u, 72);
   $('mName').textContent = u.display_name;
   $('mSub').textContent = `@${u.username}`;
+
+  const title = u.rank_title || rankOf(u.level)[1];
+  const span = Math.max(1, u.xp_next - u.xp_level_start);
+  const pct = Math.max(0, Math.min(100, Math.round((u.xp - u.xp_level_start) / span * 100)));
+  const nt = nextTier(u.level);
+  $('mRankBox').innerHTML = `<div class="rankrow">${sprite(rankKey(u.level),44)}<div><b>${esc(title)}</b><span>Nivel ${u.level}</span></div></div>
+    <div class="xpbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><i style="width:0"></i><em>${nf(u.xp)} / ${nf(u.xp_next)} XP</em></div>
+    <p class="xpnote">Te ${u.xp_next - u.xp === 1 ? 'falta' : 'faltan'} ${nf(Math.max(0, u.xp_next - u.xp))} XP para el nivel ${u.level + 1}.${nt ? ` Siguiente rango: ${nt[1]} (nivel ${nt[0]}).` : ' Alcanzaste el rango máximo.'}</p>`;
+  requestAnimationFrame(() => requestAnimationFrame(() => { const f = $('mRankBox').querySelector('.xpbar i'); if(f) f.style.width = pct + '%'; }));
+
   $('pairs').innerHTML = [
+    pair('XP total', nf(u.xp), 'Puesto en XP', `#${nf(u.xp_rank)}`),
     pair('Mensajes totales', nf(u.total_messages), 'Puesto en el chat', `#${nf(u.chat_rank)}`),
     pair('Presentes totales', nf(u.total_presentes), 'Puesto en presentes', `#${nf(u.presentes_rank)}`),
     pair('Mensajes hoy', nf(u.messages_today), 'Mensajes últimos 7 días', nf(u.messages_7d)),
@@ -422,6 +534,7 @@ async function openProfile(raw){
     pair('Racha actual', `${u.streak} ${plural(u.streak,'día','días')}`, 'Mejor racha', `${u.best_streak} ${plural(u.best_streak,'día','días')}`),
     pair('Miembro desde', fmtDay(u.member_since), 'Último presente', ago(u.last_presente_at)),
   ].join('');
+  $('mQuests').innerHTML = (qs || []).map(q => questCard(q, true)).join('');
   $('modal').classList.add('open'); $('mClose').focus();
   return true;
 }
@@ -439,7 +552,24 @@ db.channel('presentes-feed')
     if(s === 'SUBSCRIBED') setStatus('En tiempo real','#53fc18');
     else if(['CHANNEL_ERROR','TIMED_OUT','CLOSED'].includes(s)) setStatus('Reconectando…','#f59e0b');
   });
-setInterval(() => { loadSummary(); loadBoard(); loadFeed(); }, 30000);   // mensajes y tiempo activo se refrescan así
+/* ---------- aviso de subida de nivel ---------- */
+function toast(html){
+  const t = document.createElement('div');
+  t.className = 'toast'; t.innerHTML = html;
+  $('toasts').appendChild(t);
+  setTimeout(() => t.classList.add('out'), 6000);
+  setTimeout(() => t.remove(), 6600);
+}
+db.channel('level-ups')
+  .on('postgres_changes', { event:'INSERT', schema:'public', table:'level_ups' }, async (p) => {
+    const r = p.new;
+    const { data: u } = await db.from('users').select('display_name').eq('id', r.user_id).maybeSingle();
+    if(!u) return;
+    toast(`${sprite(rankKey(r.level),36)}<div><b>¡Subida de nivel!</b><span>${esc(u.display_name)} llegó al nivel ${r.level} · ${esc(r.rank_title)}</span></div>`);
+    refreshSoon();
+  })
+  .subscribe();
+setInterval(() => { loadSummary(); loadBoard(); loadFeed(); if(!$('questView').hidden) loadQuests(); }, 30000);   // mensajes y tiempo activo se refrescan así
 
 loadSummary(); loadBoard(); loadFeed();
 </script>
