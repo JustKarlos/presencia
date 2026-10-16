@@ -166,6 +166,64 @@ header{padding:1.2rem 0 0;display:grid;grid-template-columns:1fr minmax(0,620px)
 @keyframes toastin{from{transform:translateX(120%)}to{transform:none}}
 @keyframes toastout{to{transform:translateX(120%);opacity:0}}
 @media (prefers-reduced-motion:reduce){.xpbar i{transition:none}.toast,.toast.out{animation:none}}
+
+/* Cosméticos: marcos de avatar */
+.frame{display:inline-grid;border-radius:50%;flex:none}
+.frame .av{box-shadow:none!important}
+.fr-wood{box-shadow:0 0 0 2px #150a03,0 0 0 5px #8a552a,0 0 0 7px #150a03}
+.fr-moss{box-shadow:0 0 0 2px #150a03,0 0 0 5px #3fd01f,0 0 0 7px #150a03,0 0 10px 7px rgba(63,208,31,.35)}
+.fr-gem{box-shadow:0 0 0 2px #150a03,0 0 0 5px #35d0ff,0 0 0 7px #150a03;animation:gempulse 1.8s steps(6,end) infinite}
+@keyframes gempulse{50%{box-shadow:0 0 0 2px #150a03,0 0 0 5px #9be9ff,0 0 0 7px #150a03,0 0 14px 8px rgba(53,208,255,.55)}}
+.fr-gold{box-shadow:0 0 0 2px #150a03,0 0 0 5px #ffc21a,0 0 0 7px #150a03,0 0 12px 7px rgba(255,194,26,.5);animation:goldshine 2.4s steps(8,end) infinite}
+@keyframes goldshine{50%{box-shadow:0 0 0 2px #150a03,0 0 0 5px #fff1a8,0 0 0 7px #150a03,0 0 16px 9px rgba(255,194,26,.75)}}
+.fr-fire{box-shadow:0 0 0 2px #150a03,0 0 0 5px #ff6a1a,0 0 0 7px #150a03,0 0 14px 8px rgba(255,90,20,.6);animation:fireflick .9s steps(3,end) infinite}
+@keyframes fireflick{33%{box-shadow:0 0 0 2px #150a03,0 0 0 5px #ffb81c,0 0 0 7px #150a03,0 0 18px 10px rgba(255,140,20,.7)}66%{box-shadow:0 0 0 2px #150a03,0 0 0 5px #e0452c,0 0 0 7px #150a03,0 0 12px 7px rgba(224,69,44,.6)}}
+.fr-rainbow{box-shadow:0 0 0 2px #150a03,0 0 0 5px #ff4d4d,0 0 0 7px #150a03;animation:rbframe 3s steps(8,end) infinite}
+@keyframes rbframe{25%{box-shadow:0 0 0 2px #150a03,0 0 0 5px #ffc21a,0 0 0 7px #150a03}50%{box-shadow:0 0 0 2px #150a03,0 0 0 5px #3fd01f,0 0 0 7px #150a03}75%{box-shadow:0 0 0 2px #150a03,0 0 0 5px #35d0ff,0 0 0 7px #150a03}}
+
+/* Cosméticos: efectos de nombre */
+.ne{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom}
+.ne-neon{color:#eaffe2;text-shadow:0 0 4px #53fc18,0 0 10px #53fc18,0 0 20px #2fb80f;animation:neon 2s ease-in-out infinite}
+@keyframes neon{50%{text-shadow:0 0 2px #53fc18,0 0 6px #53fc18,0 0 12px #2fb80f}}
+.ne-ice{color:#dff6ff;text-shadow:0 0 4px #35d0ff,0 0 12px #35d0ff}
+.ne-gold,.ne-fire,.ne-rainbow{color:transparent;-webkit-background-clip:text;background-clip:text;text-shadow:none;background-size:200% 100%;animation:grad 3s linear infinite;filter:drop-shadow(1px 1px 0 #150a03)}
+.ne-gold{background-image:linear-gradient(90deg,#ffd75a,#fff6c2,#ffb81c,#ffd75a)}
+.ne-fire{background-image:linear-gradient(90deg,#ff3b1a,#ff9a1f,#ffd84a,#ff9a1f,#ff3b1a);animation-duration:1.4s}
+.ne-rainbow{background-image:linear-gradient(90deg,#ff4d4d,#ffc21a,#3fd01f,#35d0ff,#b46bff,#ff4d4d)}
+@keyframes grad{to{background-position:200% 0}}
+
+/* Cosméticos: fondos de perfil (también sirven de muestra en la tienda) */
+.swatch{width:100%;height:64px;border:2px solid #150a03;border-radius:8px;background:#2b2d2a}
+.pb-jungle{background-image:linear-gradient(rgba(10,30,14,.5),rgba(10,30,14,.75)),repeating-linear-gradient(90deg,#1f4d27 0 6px,#2a6a34 6px 12px);background-clip:padding-box}
+.pb-night{background-image:radial-gradient(circle at 20% 30%,#fff 0 1px,transparent 2px),radial-gradient(circle at 70% 20%,#fff 0 1px,transparent 2px),radial-gradient(circle at 50% 70%,#bfe 0 1px,transparent 2px),linear-gradient(#0b1230,#1a1f4a);background-size:90px 90px,120px 120px,70px 70px,auto;background-clip:padding-box}
+.pb-temple{background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.28) 0 2px,transparent 2px 28px),repeating-linear-gradient(90deg,rgba(0,0,0,.28) 0 2px,transparent 2px 44px),linear-gradient(#4a5246,#353a33);background-clip:padding-box}
+.pb-lava{background-image:linear-gradient(rgba(20,0,0,.68),rgba(45,8,0,.82)),repeating-radial-gradient(circle at 30% 120%,#ff5a14 0 8px,#b82a0a 8px 18px,#4a0f05 18px 30px);background-clip:padding-box}
+.pb-gems{background-image:linear-gradient(45deg,rgba(53,208,255,.2) 25%,transparent 25%),linear-gradient(-45deg,rgba(255,80,200,.16) 25%,transparent 25%),linear-gradient(#1a1235,#0f0b22);background-size:36px 36px,36px 36px,auto;background-clip:padding-box}
+
+/* Tienda */
+.shopbtn{border:12px solid transparent;border-image:url("assets/tab.png") 14 fill/12px stretch;padding:0 .5rem;font-family:var(--display);font-weight:700;font-size:1.1rem;line-height:1.1;color:#fff;text-shadow:var(--ol);white-space:nowrap;filter:drop-shadow(0 4px 4px rgba(0,0,0,.45));image-rendering:pixelated}
+.shopbtn:hover{filter:brightness(1.15) drop-shadow(0 4px 4px rgba(0,0,0,.45))}
+.hright{justify-self:end}
+a.btn{display:inline-block;text-decoration:none}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.shopcard{max-width:800px}
+.shoptitle{font-family:var(--display);font-weight:700;font-size:1.9rem;color:var(--gold);text-shadow:var(--ol);margin:.1rem 0 .6rem}
+.wallet{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem .9rem;background:#1a1c1a;border:2px solid var(--rim);border-radius:10px;padding:.6rem .8rem;margin-bottom:.7rem}
+.wallet .bal{font-family:var(--display);font-weight:700;font-size:1.35rem;color:var(--gold);text-shadow:var(--ol)}
+.wallet small{flex-basis:100%;color:var(--tan);font-size:.75rem}
+.wallet .btn{margin-left:auto}
+.shopmsg{min-height:1.3rem;color:var(--leaf);font-weight:800;font-size:.9rem;margin:.5rem 0}
+.shopgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.6rem}
+.item{background:#1a1c1a;border:2px solid var(--rim);border-radius:10px;padding:.6rem;display:flex;flex-direction:column;gap:.3rem}
+.item.eq{border-color:#4be01a}
+.prev{display:grid;place-items:center;min-height:88px;background:#161816;border-radius:8px;padding:.6rem;overflow:hidden}
+.in{font-family:var(--display);font-weight:700;font-size:1.15rem;color:#fff;line-height:1.1}
+.item small{color:var(--tan);font-size:.75rem;min-height:2.2em}
+.ibot{display:flex;justify-content:space-between;align-items:center;gap:.4rem;margin-top:auto}
+.cost{font-family:var(--display);font-weight:700;color:var(--gold)}
+.badge-eq{font-size:.7rem;font-weight:800;color:#0f2a08;background:#7fe044;border-radius:5px;padding:0 .4rem}
+@media (max-width:700px){.hright{justify-self:center;order:3}}
+@media (prefers-reduced-motion:reduce){.fr-gem,.fr-gold,.fr-fire,.fr-rainbow,.ne-neon,.ne-gold,.ne-fire,.ne-rainbow{animation:none}}
 .flash{animation:flash 1.6s ease-out}
 @keyframes flash{from{background:rgba(83,252,24,.28)}to{background:transparent}}
 @media (prefers-reduced-motion:reduce){.flash,.live{animation:none}}
@@ -191,7 +249,7 @@ const CONFIG = {
   <header>
     <div class="status" role="status"><span class="dot" id="dot"></span><span id="statusTxt">Conectando…</span></div>
     <div class="sign"><img src="assets/sign.png" alt=""><h1 id="chan" class="sr"></h1></div>
-    <div class="hspace"></div>
+    <div class="hright"><button class="shopbtn" id="shopBtn" type="button">Tienda</button></div>
   </header>
   <div class="banner"><p>Escribe <code>!presente</code> en el chat durante el directo. Sumas 1 punto cada hora y tu racha crece por cada día seguido que participes.</p></div>
 
@@ -273,6 +331,20 @@ const CONFIG = {
   </div>
 </div>
 
+<div id="shopModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="shopTitle">
+  <div class="card shopcard">
+    <button id="shopClose" class="close" aria-label="Cerrar">&times;</button>
+    <h2 id="shopTitle" class="shoptitle">Tienda de cosméticos</h2>
+    <div id="shopWallet"></div>
+    <div class="chips" id="shopFilters">
+      <button class="chip on" data-f="all">Todos</button><button class="chip" data-f="frame">Marcos</button>
+      <button class="chip" data-f="name_effect">Efectos de nombre</button><button class="chip" data-f="background">Fondos</button>
+    </div>
+    <p id="shopMsg" class="shopmsg" role="status"></p>
+    <div id="shopGrid" class="shopgrid"></div>
+  </div>
+</div>
+
 <div id="toasts" aria-live="polite"></div>
 
 <script>
@@ -351,6 +423,25 @@ async function rpc(fn, args){
   return data;
 }
 
+/* ---------- cosméticos equipados ---------- */
+const FN_URL = `${CONFIG.SUPABASE_URL}/functions/v1/kick-webhook`;
+const COS = new Map();                                    // id -> objeto de la tabla cosmetics
+const safeCls = (c) => /^[a-z0-9_-]{1,40}$/.test(c || '') ? c : '';
+async function loadCosmetics(){
+  const { data, error } = await db.from('cosmetics').select('*').order('sort');
+  if(error){ console.error('cosmetics', error); return; }
+  COS.clear();
+  data.forEach(c => COS.set(c.id, { ...c, css: safeCls(c.css_class), url: /^https:\/\//.test(c.asset_url || '') ? c.asset_url : '' }));
+}
+const cosClass = (id) => (id && COS.get(id)?.css) || '';
+const frameOf = (u) => cosClass(u.frame_id ?? u.equipped_frame_id);
+const nameFxOf = (u) => cosClass(u.name_id ?? u.equipped_name_effect_id);
+function avatarF(u, size){
+  const f = frameOf(u);
+  return f ? `<span class="frame ${f}">${avatar(u, size)}</span>` : avatar(u, size);
+}
+const nameHtml = (u) => `<span class="ne ${nameFxOf(u)}">${esc(u.display_name)}</span>`;
+
 const st = { metric:'presentes', range:'all', from:null, to:null };
 let rows = [], feedRows = [], reqId = 0, firstRender = true;
 
@@ -382,15 +473,15 @@ async function loadBoard(){
 
 function podiumTile(u){
   return `<button class="pod p${u.rank}" data-u="${esc(u.username)}">
-    ${avatar(u, u.rank===1 ? 84 : 64)}
+    ${avatarF(u, u.rank===1 ? 84 : 64)}
     <span class="pts">${fmtVal(st.metric,u.value)}</span>
-    <span class="nm">${esc(u.display_name)}</span></button>`;
+    <span class="nm">${nameHtml(u)}</span></button>`;
 }
 function rowItem(u){
   const sub = st.metric === 'streaks' ? `Mejor racha: ${u.best_streak} ${plural(u.best_streak,'día','días')}` : ago(u.last_seen);
   const title = u.rank_title || rankOf(u.level)[1];
-  return `<li><button class="row" data-u="${esc(u.username)}"><span class="rk">${u.rank}</span>${avatar(u,40)}
-    <span class="info"><b>${esc(u.display_name)}<span class="lvl">Nv. ${u.level}</span></b>
+  return `<li><button class="row" data-u="${esc(u.username)}"><span class="rk">${u.rank}</span>${avatarF(u,40)}
+    <span class="info"><b>${nameHtml(u)}<span class="lvl">Nv. ${u.level}</span></b>
       <small class="rk2">${sprite(rankKey(u.level),14)}<span>${esc(title)} · ${sub}</span></small></span>
     <span class="total">${fmtVal(st.metric,u.value)}</span></button></li>`;
 }
@@ -472,14 +563,14 @@ const pick = (e) => { const b = e.target.closest('[data-u]'); if(b) openProfile(
 /* ---------- actividad en vivo ---------- */
 async function loadFeed(){
   const { data, error } = await db.from('check_ins')
-    .select('created_at, users(username,display_name,avatar_url)')
+    .select('created_at, users(username,display_name,avatar_url,equipped_frame_id,equipped_name_effect_id)')
     .order('created_at', { ascending:false }).limit(8);
   if(error){ console.error(error); return; }
   feedRows = data.filter(r => r.users); renderFeed();
 }
 function renderFeed(){
-  $('feed').innerHTML = feedRows.map(r => `<li><button class="fi" data-u="${esc(r.users.username)}">${avatar(r.users,34)}
-    <span class="t"><b>${esc(r.users.display_name)}</b>registró su presente<small>${ago(r.created_at)}</small></span></button></li>`).join('')
+  $('feed').innerHTML = feedRows.map(r => `<li><button class="fi" data-u="${esc(r.users.username)}">${avatarF(r.users,34)}
+    <span class="t"><b>${nameHtml(r.users)}</b>registró su presente<small>${ago(r.created_at)}</small></span></button></li>`).join('')
     || '<li class="empty" style="border:0;background:none">Aún no hay presentes.</li>';
 }
 
@@ -512,8 +603,16 @@ async function openProfile(raw){
   const [u, qs] = await Promise.all([rpc('get_user_stats', { p_username: username }), rpc('get_quests', { p_username: username })]);
   if(!u) return false;
   const pair = (l1,v1,l2,v2) => `<div class="pair"><div><span>${l1}</span><b>${v1}</b></div><div><span>${l2}</span><b>${v2}</b></div></div>`;
-  $('mAvatar').innerHTML = avatar(u, 72);
-  $('mName').textContent = u.display_name;
+  $('mAvatar').innerHTML = avatarF(u, 72);
+  $('mName').innerHTML = nameHtml(u);
+  const card = $('modal').querySelector('.card');
+  card.className = card.className.replace(/\bpb-[a-z0-9_-]+/g, '').replace(/\s+/g, ' ').trim();
+  card.style.removeProperty('background-image');
+  const bg = u.background_id ? COS.get(u.background_id) : null;
+  if(bg){
+    if(bg.css) card.classList.add(bg.css);
+    if(bg.url) card.style.backgroundImage = `linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),url("${bg.url}")`;
+  }
   $('mSub').textContent = `@${u.username}`;
 
   const title = u.rank_title || rankOf(u.level)[1];
@@ -542,7 +641,104 @@ async function openProfile(raw){
 const closeModal = () => $('modal').classList.remove('open');
 $('mClose').onclick = closeModal;
 $('modal').addEventListener('click', (e) => { if(e.target === $('modal')) closeModal(); });
-document.addEventListener('keydown', (e) => { if(e.key === 'Escape'){ closeModal(); $('pop').hidden = true; } });
+document.addEventListener('keydown', (e) => { if(e.key === 'Escape'){ closeModal(); closeShop(); $('pop').hidden = true; } });
+
+/* ---------- sesión con Kick y tienda ---------- */
+let sess = null, wallet = null, shopFilter = 'all', openShopAfterBoot = false;
+try { sess = JSON.parse(localStorage.getItem('kickSession') || 'null'); } catch {}
+(() => {                                                    // al volver del login: #session=TOKEN&user=NOMBRE
+  const h = new URLSearchParams(location.hash.slice(1));
+  if(!h.get('session')) return;
+  sess = { token: h.get('session'), user: h.get('user') || '' };
+  try { localStorage.setItem('kickSession', JSON.stringify(sess)); } catch {}
+  history.replaceState(null, '', location.pathname + location.search);
+  openShopAfterBoot = true;
+})();
+
+async function shopApi(path, body){
+  try {
+    const r = await fetch(FN_URL + path, {
+      method: body ? 'POST' : 'GET',
+      headers: { Authorization: `Bearer ${sess?.token}`, ...(body ? { 'content-type': 'application/json' } : {}) },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    const j = await r.json().catch(() => ({}));
+    if(r.status === 401){ logout(false); return { ok:false, reason:'no_session' }; }
+    return j;
+  } catch(e){ console.error(e); return { ok:false, reason:'network' }; }
+}
+function logout(callApi){
+  if(callApi && sess) shopApi('/shop/logout', {});
+  sess = null; wallet = null;
+  try { localStorage.removeItem('kickSession'); } catch {}
+  renderShop();
+}
+async function loadWallet(){ wallet = sess ? await rpc('get_wallet', { p_username: sess.user }) : null; }
+
+const MSG = { insufficient:'No te alcanza la XP.', already_owned:'Ya tienes este objeto.', user_not_found:'Todavía no estás en el ranking: escribe en el chat durante un directo.',
+  item_not_found:'Ese objeto ya no está disponible.', not_owned:'Primero tienes que comprarlo.', no_session:'Tu sesión venció: inicia sesión de nuevo.',
+  network:'No pude conectar con el servidor.', error:'Algo salió mal. Inténtalo otra vez.' };
+
+function previewHtml(c){
+  const me = wallet || { username:'tu', display_name:'Tu nombre', avatar_url:null };
+  if(c.type === 'frame') return `<span class="frame ${c.css}">${avatar(me, 52)}</span>`;
+  if(c.type === 'name_effect') return `<span class="ne ${c.css}" style="font-size:1.35rem;font-family:var(--display);font-weight:700">${esc(me.display_name)}</span>`;
+  const st2 = c.url ? ` style="background-size:cover;background-image:url('${esc(c.url)}')"` : '';
+  return `<div class="swatch ${c.css}"${st2}></div>`;
+}
+function itemCard(c){
+  const owned = !!wallet?.owned?.includes(c.id);
+  const eq = !!wallet && wallet.equipped[c.type] === c.id;
+  const short = wallet ? c.cost - wallet.balance : 0;
+  let btn;
+  if(!sess)            btn = `<button class="btn" data-act="login">Comprar</button>`;
+  else if(!wallet)     btn = `<button class="btn" disabled>Comprar</button>`;
+  else if(eq)          btn = `<button class="btn ghost" data-act="unequip" data-type="${c.type}">Quitar</button>`;
+  else if(owned)       btn = `<button class="btn" data-act="equip" data-id="${esc(c.id)}">Equipar</button>`;
+  else if(short > 0)   btn = `<button class="btn" disabled>Faltan ${nf(short)} XP</button>`;
+  else                 btn = `<button class="btn" data-act="buy" data-id="${esc(c.id)}">Comprar</button>`;
+  return `<div class="item ${eq ? 'eq' : ''}"><div class="prev">${previewHtml(c)}</div>
+    <b class="in">${esc(c.name)}</b><small>${esc(c.description || '')}</small>
+    <div class="ibot"><span class="cost">${owned ? (eq ? '<span class="badge-eq">Equipado</span>' : 'Tuyo') : nf(c.cost) + ' XP'}</span>${btn}</div></div>`;
+}
+function renderShop(){
+  $('shopWallet').innerHTML = !sess
+    ? `<div class="wallet"><span>Inicia sesión con tu cuenta de Kick para comprar y equipar.</span><a class="btn" href="${FN_URL}/login/start">Iniciar sesión con Kick</a></div>`
+    : wallet
+      ? `<div class="wallet"><span style="display:flex;align-items:center;gap:.5rem">${avatarF(wallet,28)}<b>${esc(wallet.display_name)}</b></span>
+          <span class="bal">${nf(wallet.balance)} XP disponibles</span>
+          <button class="btn ghost" id="logoutBtn">Cerrar sesión</button>
+          <small>XP total ganada: ${nf(wallet.xp)} · gastada: ${nf(wallet.xp_spent)}. Gastar XP no baja tu nivel.</small></div>`
+      : `<div class="wallet"><span>Sesión de <b>${esc(sess.user)}</b>: todavía no estás en el ranking. Escribe en el chat durante un directo.</span><button class="btn ghost" id="logoutBtn">Cerrar sesión</button></div>`;
+  document.querySelectorAll('#shopFilters .chip').forEach(c => c.classList.toggle('on', c.dataset.f === shopFilter));
+  const items = [...COS.values()].filter(c => c.active && (shopFilter === 'all' || c.type === shopFilter));
+  $('shopGrid').innerHTML = items.map(itemCard).join('') || '<p class="empty">No hay objetos en esta categoría.</p>';
+}
+async function openShop(){
+  $('shopModal').classList.add('open'); $('shopClose').focus();
+  $('shopMsg').textContent = '';
+  if(!COS.size) await loadCosmetics();
+  if(sess){ const ok = await shopApi('/shop/session'); if(ok.ok) await loadWallet(); }
+  renderShop();
+}
+const closeShop = () => $('shopModal').classList.remove('open');
+$('shopBtn').onclick = openShop;
+$('shopClose').onclick = closeShop;
+$('shopModal').addEventListener('click', (e) => { if(e.target === $('shopModal')) closeShop(); });
+$('shopFilters').addEventListener('click', (e) => { const c = e.target.closest('.chip'); if(!c) return; shopFilter = c.dataset.f; renderShop(); });
+$('shopWallet').addEventListener('click', (e) => { if(e.target.id === 'logoutBtn') logout(true); });
+$('shopGrid').addEventListener('click', async (e) => {
+  const b = e.target.closest('button[data-act]'); if(!b || b.disabled) return;
+  const act = b.dataset.act;
+  if(act === 'login'){ location.href = FN_URL + '/login/start'; return; }
+  b.disabled = true;
+  const res = act === 'buy'   ? await shopApi('/shop/buy',   { cosmetic_id: b.dataset.id })
+            : act === 'equip' ? await shopApi('/shop/equip', { cosmetic_id: b.dataset.id })
+            :                   await shopApi('/shop/unequip', { type: b.dataset.type });
+  $('shopMsg').textContent = res.ok ? (act === 'buy' ? '¡Compra realizada!' : act === 'equip' ? 'Objeto equipado.' : 'Objeto quitado.') : (MSG[res.reason] || MSG.error);
+  await loadWallet(); renderShop();
+  if(res.ok){ loadBoard(); loadFeed(); }
+});
 
 /* ---------- tiempo real (solo presentes) y refresco periódico ---------- */
 let timer;
@@ -572,7 +768,7 @@ db.channel('level-ups')
   .subscribe();
 setInterval(() => { loadSummary(); loadBoard(); loadFeed(); if(!$('questView').hidden) loadQuests(); }, 30000);   // mensajes y tiempo activo se refrescan así
 
-loadSummary(); loadBoard(); loadFeed();
+loadCosmetics().finally(() => { loadSummary(); loadBoard(); loadFeed(); if(openShopAfterBoot) openShop(); });
 </script>
 </body>
 </html>
