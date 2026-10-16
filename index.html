@@ -61,8 +61,8 @@ header{padding:1.2rem 0 0;display:grid;grid-template-columns:1fr minmax(0,620px)
 .pstage>img{display:block;width:100%;height:auto;filter:drop-shadow(0 8px 8px rgba(0,0,0,.5))}
 .pod{position:absolute;transform:translateX(-50%);width:32%;display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0}
 /* Ajusta aquí la posición de cada puesto: left = centro horizontal, bottom = altura sobre el bloque */
-.p1{left:48%;bottom:88%}.p2{left:20.5%;bottom:71%}.p3{left:77%;bottom:58%}
-.pod .nm{font-family:var(--display);font-weight:700;font-size:1.1rem;line-height:1.15;color:#fff;text-shadow:var(--ol);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.p1{left:48%;bottom:95%}.p2{left:20.5%;bottom:78%}.p3{left:77%;bottom:65%}
+.pod .nm{font-family:var(--display);font-weight:700;font-size:1.1rem;line-height:1.15;color:#fff;text-shadow:var(--ol);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:.05rem .55rem;background:rgba(15,8,3,.78);border:2px solid #150a03;border-radius:6px}
 .pod .pts{font-family:var(--display);font-weight:700;font-size:.95rem;color:var(--gold);text-shadow:var(--ol);margin-bottom:.35rem}
 .p1 .av{box-shadow:0 0 0 3px #150a03,0 0 0 6px var(--gold),0 0 22px rgba(255,194,26,.5)}
 .p2 .av,.p3 .av{box-shadow:0 0 0 3px #150a03,0 0 0 5px #8a8f86}
@@ -230,7 +230,7 @@ a.btn{display:inline-block;text-decoration:none}
 @media (prefers-reduced-motion:reduce){.flash,.live{animation:none}}
 @media (max-width:900px){.layout{grid-template-columns:1fr}.feed{position:static}.stats{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:700px){header{grid-template-columns:1fr;justify-items:center}.status{justify-self:center;order:2}.hspace{display:none}.banner{padding:1.1rem 2.6rem}.banner p{font-size:1rem}.podium{padding-top:8rem}}
-@media (max-width:480px){.stat b{font-size:2rem}.p1 .av{width:68px!important;height:68px!important}.p2 .av,.p3 .av{width:52px!important;height:52px!important}.pod .nm{font-size:.95rem}.pod .pts{font-size:.82rem}.panel,.feed,.card{border-width:16px;border-image-width:16px}.stat{border-width:16px;border-image-width:16px}}
+@media (max-width:480px){.stat b{font-size:2rem}.p1 .av{width:68px!important;height:68px!important}.p2 .av,.p3 .av{width:52px!important;height:52px!important}.pod{width:36%}.pod .nm{font-size:.9rem;padding:.05rem .35rem}.pod .pts{font-size:.74rem;white-space:nowrap}.panel,.feed,.card{border-width:16px;border-image-width:16px}.stat{border-width:16px;border-image-width:16px}}
 </style>
 </head>
 <body>
