@@ -1,0 +1,74 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Widget: temporizador</title>
+<link rel="stylesheet" href="common.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script><script src="common.js"></script>
+<style>
+#wrap{position:fixed;padding:1vh 2.5vw 1.2vh;text-align:center;min-width:20vw}
+#wrap.pos-tc{left:50%;top:3vh;transform:translateX(-50%)}#wrap.pos-tl{left:2vw;top:3vh}#wrap.pos-tr{right:2vw;top:3vh}
+#wrap.pos-bc{left:50%;bottom:3vh;transform:translateX(-50%)}#wrap.pos-c{left:50%;top:50%;transform:translate(-50%,-50%)}
+#label{font-size:3.2vh;color:var(--gold);min-height:3.4vh;line-height:1.1}
+#clock{font-family:var(--clock),monospace;font-size:var(--cs,8vh);color:#53fc18;letter-spacing:.04em;text-shadow:0 0 1.2vh rgba(83,252,24,.75),.5vh .5vh 0 #0a2a05;line-height:1.25}
+.warn #clock{color:#ff5a4d;text-shadow:0 0 1.2vh rgba(255,90,77,.8),.5vh .5vh 0 #3a0a05;animation:blink 1s steps(2) infinite}
+.paused #clock{animation:blink 1.6s steps(2) infinite;opacity:.8}
+.end #clock{color:#ffc21a;animation:blink .5s steps(2) infinite}
+@keyframes blink{50%{opacity:.25}}
+#delta{position:absolute;left:50%;top:100%;transform:translateX(-50%);font-family:var(--clock),monospace;font-size:3.6vh;opacity:0;white-space:nowrap}
+#delta.show{animation:pop 3s steps(24,end) forwards}#delta.plus{color:#53fc18}#delta.minus{color:#ff5a4d}
+@keyframes pop{0%{opacity:0;transform:translate(-50%,-1vh)}10%{opacity:1}80%{opacity:1;transform:translate(-50%,2vh)}100%{opacity:0;transform:translate(-50%,3vh)}}
+@media (prefers-reduced-motion:reduce){.warn #clock,.paused #clock,.end #clock{animation:none}}
+</style></head><body>
+<div id="wrap" class="panel"><div id="label"></div><div id="clock">00:00:00</div><div id="delta"></div></div>
+<script>
+/* Parámetros: ?pos=tc|tl|tr|bc|c  &size=8 (vh)  &font=Press Start 2P  &sound=1 (pitido al llegar a cero)   (no necesita key) */
+const { P, num, db, loadFont, clockOffset } = OV;
+const FONT = P.get('font') || 'Press Start 2P';
+loadFont(FONT);
+document.documentElement.style.setProperty('--clock', `"${FONT}"`);
+document.documentElement.style.setProperty('--cs', num('size', 8) + 'vh');
+const wrap = document.getElementById('wrap'), clock = document.getElementById('clock'), label = document.getElementById('label'), delta = document.getElementById('delta');
+wrap.className = 'panel pos-' + (P.get('pos') || 'tc');
+let t = null, off = 0, beeped = false;
+const pad = (n) => String(n).padStart(2, '0');
+const fmt = (ms) => { const s = Math.floor(ms / 1000); return [Math.floor(s / 3600), Math.floor(s % 3600 / 60), s % 60].map(pad).join(':'); };
+const ms = (r) => {
+  const now = Date.now() + off;
+  if(r.mode === 'countdown') return r.running ? Math.max(0, new Date(r.ends_at) - now) : Number(r.base_ms);
+  return Number(r.base_ms) + (r.running ? Math.max(0, now - new Date(r.started_at)) : 0);
+};
+function beep(){
+  if(P.get('sound') !== '1') return;
+  try { const a = new AudioContext(), o = a.createOscillator(), g = a.createGain(); o.type = 'square'; o.frequency.value = 880; g.gain.value = .15;
+    o.connect(g); g.connect(a.destination); o.start(); o.stop(a.currentTime + .6); } catch {}
+}
+function popup(d){
+  const s = Math.round(Math.abs(d) / 1000);
+  delta.textContent = (d > 0 ? '+' : '−') + (s >= 3600 ? `${Math.floor(s / 3600)}:${pad(Math.floor(s % 3600 / 60))}:${pad(s % 60)}` : `${Math.floor(s / 60)}:${pad(s % 60)}`);
+  delta.className = ''; void delta.offsetWidth; delta.className = 'show ' + (d > 0 ? 'plus' : 'minus');
+}
+function apply(row){
+  if(t && t.mode === 'countdown' && row.mode === 'countdown' && ms(t) > 0){      // aviso "+5:00" cuando suman o restan tiempo
+    const d = ms(row) - ms(t);
+    if(Math.abs(d) >= 1500) popup(d);
+  }
+  t = row; beeped = false;
+}
+function draw(){
+  if(!t) return;
+  const v = ms(t), cd = t.mode === 'countdown';
+  clock.textContent = fmt(v);
+  label.textContent = t.label || (cd ? '' : 'Cronómetro');
+  wrap.classList.toggle('warn', cd && t.running && v > 0 && v <= 10000);
+  wrap.classList.toggle('paused', !t.running && v > 0);
+  const over = cd && v === 0 && (t.running || t.base_ms === 0) && t.ends_at !== null;
+  wrap.classList.toggle('end', over);
+  if(over && !beeped){ beeped = true; beep(); }
+}
+async function fetchRow(){ const { data } = await db.from('overlay_timer').select('*').eq('id', 'main').single(); if(data) apply(data); }
+(async () => {
+  off = await clockOffset();
+  await fetchRow();
+  db.channel('timer').on('postgres_changes', { event: '*', schema: 'public', table: 'overlay_timer' }, (p) => { if(p.new) apply(p.new); }).subscribe();
+  setInterval(fetchRow, 30000);
+  setInterval(draw, 200);
+})();
+</script></body></html>

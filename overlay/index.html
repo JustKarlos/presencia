@@ -1,0 +1,44 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Widgets para OBS</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0d2013;color:#f3e7c4;font-family:Nunito,system-ui,sans-serif;font-weight:600;line-height:1.5;padding:1.5rem}
+main{max-width:860px;margin:0 auto}
+h1{font-family:"Barlow Condensed",sans-serif;font-size:2.4rem;color:#ffc21a;margin:0 0 .3rem}
+p.lead{color:#cdb98a;margin:0 0 1rem}
+label{display:block;margin:1rem 0 .3rem;font-weight:800}
+input{width:100%;padding:.6rem .8rem;border-radius:8px;border:2px solid #50564f;background:#1a1c1a;color:#f3e7c4;font:inherit}
+.w{background:#262826;border:2px solid #50564f;border-radius:12px;padding:.9rem 1rem;margin-top:.9rem}
+.w h2{font-family:"Barlow Condensed",sans-serif;font-size:1.5rem;margin:0}
+.w p{margin:.2rem 0 .5rem;color:#cdb98a;font-size:.92rem}
+.url{display:flex;gap:.5rem}.url input{font-size:.82rem}
+button{padding:.5rem 1rem;border-radius:8px;border:2px solid #1d4a0f;background:linear-gradient(#7fe044,#3f9a1d);color:#0f2a08;font:inherit;font-weight:800;cursor:pointer;white-space:nowrap}
+small{color:#9a9a8a;display:block;margin-top:.4rem;font-size:.8rem}
+</style></head><body><main>
+<h1>Widgets para OBS</h1>
+<p class="lead">Pega tu clave y copia cada URL como <b>Fuente de navegador</b> (1920×1080). Los parámetros extra se agregan al final de la URL.</p>
+<label for="key">Tu clave de widgets (el secret <code>OVERLAY_KEY</code>)</label>
+<input id="key" placeholder="una-clave-larga-y-secreta" autocomplete="off">
+<div id="list"></div>
+<script>
+const W = [
+ ['chat.html','Chat en pantalla','Mensajes de Kick con insignias, colores y emotes; se van solos a los 15 s.','&pos=bl&ttl=15&max=8','pos, ttl, max, w, fs, font, pixel'],
+ ['emotes.html','Lluvia de emotes','Emotes de Kick y 7TV que suben o caen por la pantalla.','&mode=both&size=9','mode (rise|rain|both), size, max, per, dur, pixel'],
+ ['ranking.html','Ranking en vivo','Top de usuarios que se actualiza solo.','&metric=messages&range=today&top=5','metric (messages|presentes|xp|active), range (today|7d|30d|all), top, pos, w'],
+ ['timer.html','Temporizador','Cuenta atrás o cronómetro retro. Se controla con !timer.','&pos=tc','pos, size, font, sound=1 (no necesita clave)'],
+ ['video.html','Videos (!video)','Cola de videos de YouTube y TikTok.','&volume=50','volume, w, th, tiktok_secs, who=0'],
+ ['music.html','Música (!sr)','Cola de canciones con tarjeta "Sonando ahora".','&volume=50&pos=bl','volume, pos, w'],
+];
+const keyEl = document.getElementById('key'), list = document.getElementById('list');
+keyEl.value = localStorage.getItem('overlayKey') || '';
+function draw(){
+  localStorage.setItem('overlayKey', keyEl.value.trim());
+  const base = location.href.replace(/[^/]*$/, '');
+  list.innerHTML = W.map(([f, t, d, q, p], i) => {
+    const u = base + f + '?key=' + encodeURIComponent(keyEl.value.trim()) + q;
+    return `<div class="w"><h2>${t}</h2><p>${d}</p><div class="url"><input readonly value="${u.replace(/"/g,'&quot;')}"><button data-i="${i}">Copiar</button></div><small>Parámetros: ${p}</small></div>`;
+  }).join('');
+}
+list.addEventListener('click', (e) => { const b = e.target.closest('button'); if(!b) return; const inp = b.previousElementSibling; inp.select(); navigator.clipboard.writeText(inp.value).then(() => { b.textContent = '¡Copiado!'; setTimeout(() => b.textContent = 'Copiar', 1200); }); });
+keyEl.addEventListener('input', draw); draw();
+</script></main></body></html>

@@ -1,0 +1,40 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Widget: lluvia de emotes</title>
+<link rel="stylesheet" href="common.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script><script src="common.js"></script>
+<style>#layer{position:fixed;inset:0;pointer-events:none;overflow:hidden}.fe{position:absolute;top:0;will-change:transform,opacity}</style>
+</head><body><div id="layer"></div>
+<script>
+/* Parámetros: ?key=  &mode=rise|rain|both  &size=9 (vh)  &max=80  &per=6 (emotes por mensaje)  &dur=7 (segundos)  &pixel=1 */
+const { P, num, listen, load7tv, parseParts } = OV;
+const MODE = P.get('mode') || 'both', SIZE = num('size', 9), MAX = num('max', 80), PER = num('per', 6), DUR = num('dur', 7);
+const layer = document.getElementById('layer');
+if(P.get('pixel') === '1') document.body.classList.add('pixel');
+let alive = 0;
+
+function spawn(url){
+  if(alive >= MAX) return;
+  const img = new Image();
+  img.className = 'fe'; img.src = url;
+  img.style.height = SIZE + 'vh';
+  if(P.get('pixel') === '1') img.style.imageRendering = 'pixelated';
+  const H = innerHeight, size = SIZE * H / 100;
+  const rise = MODE === 'rise' || (MODE === 'both' && Math.random() < .5);
+  const x = Math.random() * 92, sway = (Math.random() - .5) * 12, rot = (Math.random() - .5) * 50;
+  const from = rise ? H + size : -size * 1.5, to = rise ? -size * 1.5 : H + size;
+  img.style.left = x + 'vw';
+  img.onerror = () => { img.remove(); alive--; };
+  layer.append(img); alive++;
+  const dur = DUR * 1000 * (.8 + Math.random() * .4);
+  img.animate([
+    { transform: `translate(0,${from}px) rotate(0deg)`, opacity: 0 },
+    { transform: `translate(${sway / 3}vw,${from + (to - from) * .08}px) rotate(${rot / 3}deg)`, opacity: 1, offset: .08 },
+    { transform: `translate(${sway}vw,${to}px) rotate(${rot}deg)`, opacity: 1 },
+  ], { duration: dur, easing: 'linear' }).onfinish = () => { img.remove(); alive--; };
+}
+async function onChat(p){
+  await load7tv(p.broadcaster_id);
+  parseParts(p.content || '').filter(x => x.t === 'emote').slice(0, PER).forEach((e, i) => setTimeout(() => spawn(e.url), i * 140));
+}
+listen({ chat: onChat });
+</script></body></html>

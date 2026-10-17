@@ -1,0 +1,46 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Widget: chat</title>
+<link rel="stylesheet" href="common.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script><script src="common.js"></script>
+<style>
+#chat{position:fixed;width:var(--w,34vw);height:96vh;display:flex;flex-direction:column;justify-content:flex-end;gap:.6vh;overflow:hidden}
+#chat.pos-bl{left:2vw;bottom:2vh}#chat.pos-br{right:2vw;bottom:2vh}
+#chat.pos-tl{left:2vw;top:2vh;justify-content:flex-start}#chat.pos-tr{right:2vw;top:2vh;justify-content:flex-start}
+.msg{background:rgba(20,12,6,.8);border:.35vh solid #150a03;border-radius:.8vh;padding:.4em .65em;font-size:var(--fs,2.5vh);line-height:1.25;word-break:break-word;animation:in .35s steps(6,end)}
+.msg.out{animation:out .5s steps(6,end) forwards}
+.nm{font-weight:700}.sep{opacity:.8}.tx{font-weight:500}
+.bdg{display:inline-block;font-size:.6em;padding:0 .35em;margin-right:.35em;border-radius:.4vh;border:.25vh solid #150a03;vertical-align:.14em;line-height:1.25;text-shadow:none;color:#fff}
+.b-broadcaster{background:#e0452c}.b-moderator{background:#3fd01f;color:#0f2a08}.b-vip{background:#b46bff}.b-subscriber{background:#ffc21a;color:#3a1b08}
+.b-og,.b-founder,.b-verified,.b-staff{background:#35d0ff;color:#06222b}
+@keyframes in{from{transform:translateX(-4vw);opacity:0}to{transform:none;opacity:1}}
+@keyframes out{to{transform:translateX(-4vw);opacity:0}}
+#chat.pos-br .msg,#chat.pos-tr .msg{animation-name:inr}#chat.pos-br .msg.out,#chat.pos-tr .msg.out{animation-name:outr}
+@keyframes inr{from{transform:translateX(4vw);opacity:0}to{transform:none;opacity:1}}
+@keyframes outr{to{transform:translateX(4vw);opacity:0}}
+@media (prefers-reduced-motion:reduce){.msg,.msg.out{animation-duration:.01s}}
+</style></head><body>
+<div id="chat"></div>
+<script>
+/* Parámetros: ?key=  &pos=bl|br|tl|tr  &ttl=15 (segundos)  &max=8  &w=34 (ancho en vw)  &fs=2.5 (letra en vh)  &font=NombreGoogleFonts  &pixel=1 */
+const { P, num, esc, listen, load7tv, parseParts, partsHtml, colorOf } = OV;
+const TTL = num('ttl', 15) * 1000, MAX = num('max', 8), el = document.getElementById('chat');
+el.className = 'pos-' + (P.get('pos') || 'bl');
+document.documentElement.style.setProperty('--w', num('w', 34) + 'vw');
+document.documentElement.style.setProperty('--fs', num('fs', 2.5) + 'vh');
+if(P.get('pixel') === '1') document.body.classList.add('pixel');
+const BDG = { broadcaster:'STREAMER', moderator:'MOD', vip:'VIP', subscriber:'SUB', og:'OG', founder:'FUNDADOR', verified:'✔', staff:'STAFF' };
+const drop = (n) => { n.classList.add('out'); setTimeout(() => n.remove(), 520); };
+
+async function onChat(p){
+  await load7tv(p.broadcaster_id);
+  const n = document.createElement('div');
+  n.className = 'msg';
+  n.innerHTML = (p.badges || []).slice(0, 3).map(b => `<span class="bdg b-${esc(b)}">${BDG[b] || esc(b)}</span>`).join('') +
+    `<span class="nm" style="color:${colorOf(p.user || p.name, p.color)}">${esc(p.name)}</span><span class="sep">:</span> <span class="tx">${partsHtml(parseParts(p.content || ''))}</span>`;
+  el.append(n);
+  const live = [...el.children].filter(c => !c.classList.contains('out'));
+  live.slice(0, Math.max(0, live.length - MAX)).forEach(drop);     // solo se ven los últimos MAX
+  setTimeout(() => drop(n), TTL);                                  // y cada mensaje se va solo a los 15 s
+}
+listen({ chat: onChat });
+</script></body></html>

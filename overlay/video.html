@@ -1,0 +1,33 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Widget: videos (!video)</title>
+<link rel="stylesheet" href="common.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script><script src="common.js"></script><script src="media.js"></script>
+<style>
+#stage{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.96);opacity:0;transition:opacity .6s,transform .6s;padding:0;background:#000;border:1.2vh solid #150a03;border-radius:1vh;box-shadow:0 0 0 .5vh #8a552a,0 1.5vh 4vh rgba(0,0,0,.6);overflow:hidden}
+#stage.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+#slot{width:100%;height:100%}#slot iframe{width:100%;height:100%;border:0}
+#who{position:absolute;left:0;right:0;bottom:0;padding:.8vh 1.2vw;background:linear-gradient(transparent,rgba(0,0,0,.85));font-size:2.6vh;pointer-events:none}
+#who b{color:var(--gold)}
+@media (prefers-reduced-motion:reduce){#stage{transition:opacity .01s}}
+</style></head><body>
+<div id="stage"><div id="slot"></div><div id="who"></div></div>
+<script>
+/* Parámetros: ?key=  &volume=50 (0-100)  &w=56 (ancho en vw, YouTube)  &th=82 (alto en vh, TikTok vertical)  &tiktok_secs=90  &who=0 (ocultar "pedido por") */
+const { P, num, esc } = OV;
+const stage = document.getElementById('stage');
+OV.runQueue({
+  kind: 'video', volume: num('volume', 50), tiktokSecs: num('tiktok_secs', 90),
+  onStart(item){
+    const tk = item.provider === 'tiktok';
+    stage.style.width = tk ? (num('th', 82) * 9 / 16) + 'vh' : num('w', 56) + 'vw';
+    stage.style.height = tk ? num('th', 82) + 'vh' : (num('w', 56) * 9 / 16) + 'vw';
+    stage.innerHTML = '<div id="slot"></div>' + (P.get('who') === '0' ? '' : `<div id="who">🎬 Pedido por <b>${esc(item.requested_name)}</b> · ${esc(item.title || '')}</div>`);
+    requestAnimationFrame(() => stage.classList.add('on'));          // aparece con fundido
+    return 'slot';
+  },
+  onStop(){                                                          // desaparece con fundido al terminar
+    stage.classList.remove('on');
+    return new Promise(r => setTimeout(() => { stage.innerHTML = ''; r(); }, 700));
+  },
+});
+</script></body></html>

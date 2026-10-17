@@ -1,0 +1,68 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Widget: música (!sr)</title>
+<link rel="stylesheet" href="common.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script><script src="common.js"></script><script src="media.js"></script>
+<style>
+#hud{position:fixed;width:var(--w,30vw);display:flex;gap:1vw;align-items:center;padding:.8vh .8vw;opacity:0;transition:opacity .5s,transform .6s steps(10,end)}
+#hud.pos-bl{left:2vw;bottom:3vh;transform:translateX(-120%)}#hud.pos-br{right:2vw;bottom:3vh;transform:translateX(120%)}
+#hud.pos-tl{left:2vw;top:3vh;transform:translateX(-120%)}#hud.pos-tr{right:2vw;top:3vh;transform:translateX(120%)}
+#hud.on{opacity:1;transform:none}
+.av{width:9vh;height:9vh;font-size:3.4vh}
+.meta{flex:1;min-width:0}
+.np{font-size:2vh;color:var(--leaf)}
+.title{font-size:3.4vh;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.artist{font-size:2.4vh;color:var(--tan);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar{height:1.6vh;margin:.8vh 0 .3vh;background:#161816;border:.3vh solid #150a03;border-radius:.6vh;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:repeating-linear-gradient(90deg,#7fe044 0 .6vh,#5fc02e .6vh 1.2vh);box-shadow:inset 0 .3vh 0 rgba(255,255,255,.35);transition:width .5s linear}
+.times{display:flex;justify-content:space-between;gap:1vw;font-size:2vh;color:var(--cream)}
+.times #who{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--gold)}
+.next{margin-top:.4vh;font-size:1.9vh;color:var(--tan);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#wrap{position:fixed;left:0;top:0;width:200px;height:113px;opacity:0;pointer-events:none;z-index:-1}
+@media (prefers-reduced-motion:reduce){#hud{transition:opacity .01s}}
+</style></head><body>
+<div id="hud" class="panel">
+  <span id="avwrap"></span>
+  <div class="meta"><div class="np">♪ Sonando ahora</div><div id="title" class="title"></div><div id="artist" class="artist"></div>
+    <div class="bar"><i id="fill"></i></div>
+    <div class="times"><span id="cur">0:00</span><span id="who"></span><span id="dur">0:00</span></div>
+    <div id="next" class="next"></div></div>
+</div>
+<div id="wrap"><div id="slot"></div></div>
+<script>
+/* Parámetros: ?key=  &volume=50 (0-100)  &pos=bl|br|tl|tr  &w=30 (ancho en vw) */
+const { P, num, esc, initials } = OV;
+const hud = document.getElementById('hud'), wrap = document.getElementById('wrap');
+hud.className = 'panel pos-' + (P.get('pos') || 'bl');
+document.documentElement.style.setProperty('--w', num('w', 30) + 'vw');
+const mmss = (s) => { s = Math.max(0, Math.floor(s || 0)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+let nowItem = null;
+OV.runQueue({
+  kind: 'music', volume: num('volume', 50),
+  onStart(item){
+    nowItem = item;
+    document.getElementById('avwrap').innerHTML = item.avatar_url && /^https:\/\//.test(item.avatar_url)
+      ? `<img class="av" src="${esc(item.avatar_url)}" alt="" referrerpolicy="no-referrer">` : `<span class="av">${initials(item.requested_name)}</span>`;
+    document.getElementById('title').textContent = item.title || 'Canción';
+    document.getElementById('artist').textContent = item.author || '';
+    document.getElementById('who').textContent = 'Pedida por ' + item.requested_name;
+    document.getElementById('fill').style.width = '0';
+    document.getElementById('cur').textContent = '0:00'; document.getElementById('dur').textContent = '0:00';
+    wrap.innerHTML = '<div id="slot"></div>';
+    hud.classList.add('on');
+    return 'slot';
+  },
+  onTick(cur, dur){
+    document.getElementById('cur').textContent = mmss(cur);
+    document.getElementById('dur').textContent = mmss(dur);
+    document.getElementById('fill').style.width = (dur > 0 ? Math.min(100, cur / dur * 100) : 0) + '%';
+  },
+  onQueue(queue, cur){                                               // "Siguiente: ..."
+    const nxt = queue.find(r => !cur || r.id !== cur.id);
+    document.getElementById('next').textContent = nxt ? `Siguiente: ${nxt.title || 'Canción'} (${nxt.requested_name})` : '';
+  },
+  onStop(){
+    hud.classList.remove('on');
+    return new Promise(r => setTimeout(() => { wrap.innerHTML = '<div id="slot"></div>'; r(); }, 700));
+  },
+});
+</script></body></html>

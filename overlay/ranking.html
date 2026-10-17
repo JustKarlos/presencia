@@ -1,0 +1,59 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Widget: ranking</title>
+<link rel="stylesheet" href="common.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script><script src="common.js"></script>
+<style>
+#hud{position:fixed;width:var(--w,26vw);padding:.6vh .8vw 1vh}
+#hud.pos-tr{right:2vw;top:3vh}#hud.pos-tl{left:2vw;top:3vh}#hud.pos-br{right:2vw;bottom:3vh}#hud.pos-bl{left:2vw;bottom:3vh}
+h1{font-size:3.4vh;text-align:center;color:var(--gold);margin-bottom:.8vh;line-height:1.1}
+#rows{position:relative;height:calc(var(--rh) * var(--n))}
+.row{position:absolute;left:0;right:0;top:0;height:var(--rh);display:flex;align-items:center;gap:.8vw;padding:0 .4vw;transition:transform .7s cubic-bezier(.3,.8,.3,1),opacity .5s;background:rgba(255,255,255,.05);border-radius:.8vh}
+.rk{width:4vh;height:4vh;flex:none;display:grid;place-items:center;border:.3vh solid #150a03;border-radius:.6vh;font-size:2.6vh;background:#2b2d2a}
+.r1{background:#ffc21a;color:#3a1b08;text-shadow:none}.r2{background:#c9d1d3;color:#222;text-shadow:none}.r3{background:#cd7f32;color:#2a1608;text-shadow:none}
+.info{flex:1;min-width:0}.info b{display:block;font-size:2.8vh;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.info i{font-style:normal;font-size:2vh;color:var(--tan)}
+.val{font-size:3vh;color:var(--gold);white-space:nowrap}
+</style></head><body>
+<div id="hud" class="panel"><h1 id="title"></h1><div id="rows"></div></div>
+<script>
+/* Parámetros: ?key=  &metric=messages|presentes|xp|active  &range=today|7d|30d|all  &top=5  &pos=tr|tl|br|bl  &w=26 (vw)  &refresh=15 (s) */
+const { P, num, esc, listen, db, initials, fmtMin } = OV;
+const METRIC = P.get('metric') || 'messages', RANGE = P.get('range') || 'today', TOP = Math.min(10, num('top', 5));
+const TITLES = { messages:'Top mensajes', presentes:'Top presentes', xp:'Top XP', active:'Top tiempo activo' };
+const RANGES = { today:'hoy', '7d':'7 días', '30d':'30 días', all:'general' };
+const hud = document.getElementById('hud'), rows = document.getElementById('rows'), RH = 7.4;
+hud.className = 'panel pos-' + (P.get('pos') || 'tr');
+document.documentElement.style.setProperty('--w', num('w', 26) + 'vw');
+document.documentElement.style.setProperty('--rh', RH + 'vh');
+document.documentElement.style.setProperty('--n', TOP);
+document.getElementById('title').textContent = (TITLES[METRIC] || 'Ranking') + ' · ' + (RANGES[RANGE] || RANGE);
+
+const nf = new Intl.NumberFormat('es-AR');
+const fmt = (v) => METRIC === 'active' ? fmtMin(v) : METRIC === 'xp' ? nf.format(v) + ' XP' : nf.format(v);
+const els = new Map();
+const av = (u) => u.avatar_url && /^https:\/\//.test(u.avatar_url)
+  ? `<img class="av" style="width:5.6vh;height:5.6vh" src="${esc(u.avatar_url)}" alt="" referrerpolicy="no-referrer">`
+  : `<span class="av" style="width:5.6vh;height:5.6vh;font-size:2.2vh">${initials(u.display_name)}</span>`;
+
+async function refresh(){
+  const { data, error } = await db.rpc('get_leaderboard', { p_metric: METRIC, p_range: RANGE, p_from: null, p_to: null, p_limit: TOP });
+  if(error || !data) return;
+  const seen = new Set();
+  data.forEach((u, i) => {
+    seen.add(u.username);
+    let r = els.get(u.username);
+    if(!r){
+      r = document.createElement('div'); r.className = 'row'; r.style.opacity = 0;
+      r.style.transform = `translateY(${i * 100}%)`;
+      els.set(u.username, r); rows.append(r);
+    }
+    r.innerHTML = `<span class="rk r${i + 1}">${i + 1}</span>${av(u)}<span class="info"><b>${esc(u.display_name)}</b><i>Nv. ${u.level}</i></span><span class="val">${fmt(u.value)}</span>`;
+    requestAnimationFrame(() => { r.style.transform = `translateY(${i * 100}%)`; r.style.opacity = 1; });
+  });
+  els.forEach((r, k) => { if(!seen.has(k)){ r.style.opacity = 0; setTimeout(() => r.remove(), 600); els.delete(k); } });
+}
+let t; const soon = () => { clearTimeout(t); t = setTimeout(refresh, 2500); };    // se actualiza al chatear o dar !presente
+listen({ chat: soon, presente: soon });
+setInterval(refresh, num('refresh', 15) * 1000);
+refresh();
+</script></body></html>
