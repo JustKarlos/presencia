@@ -17,6 +17,7 @@
     const { db, FN, KEY } = OV;
     if(!KEY) OV.warn('Falta ?key=TU_CLAVE en la URL');
     let queue = [], cur = null, player = null, tmo = [], tick = null, ending = false, played = false;
+    const seen = new Set();                              // ids ya reproducidos en esta sesión: evita el bucle aunque falle el aviso a la función
 
     const ack = (id, status) => fetch(FN + '/overlay/media', {
       method: 'POST', headers: { 'content-type': 'application/json', 'x-overlay-key': KEY }, body: JSON.stringify({ id, status }),
@@ -29,7 +30,7 @@
 
     async function load(){
       const { data } = await db.from('media_queue').select('*').eq('kind', o.kind).in('status', ['queued', 'playing']).order('id');
-      queue = data || [];
+      queue = (data || []).filter(r => !seen.has(r.id));
       check();
       if(o.onQueue) o.onQueue(queue, cur);               // después de check(): ya sabemos cuál suena
     }
@@ -57,8 +58,10 @@
         tmo.push(setTimeout(() => { if(!played) finish('error'); }, 20000));       // no arrancó: pasa al siguiente
       } else {
         document.getElementById(slot).innerHTML =
-          `<iframe src="https://www.tiktok.com/player/v1/${encodeURIComponent(item.video_id)}?autoplay=1&music_info=0&description=0&rel=0&loop=0" allow="autoplay; fullscreen" style="width:100%;height:100%;border:0"></iframe>`;
+          `<iframe id="ttf" src="https://www.tiktok.com/player/v1/${encodeURIComponent(item.video_id)}?autoplay=1&volume_control=1&music_info=0&description=0&rel=0&loop=0" allow="autoplay; fullscreen" style="width:100%;height:100%;border:0"></iframe>`;
         window.addEventListener('message', onMsg);
+        const unmute = () => { try { document.getElementById('ttf').contentWindow.postMessage({ type: 'unMute', 'x-tiktok-player': true }, '*'); } catch {} };
+        [1500, 3000, 5000].forEach(ms => tmo.push(setTimeout(unmute, ms)));         // reintenta desmutear mientras carga
         tmo.push(setTimeout(() => finish('done'), (o.tiktokSecs || 90) * 1000));    // TikTok no informa siempre cuándo termina
       }
     }
@@ -66,8 +69,9 @@
       if(ending || !cur) return;
       ending = true;
       const item = cur;
+      seen.add(item.id);                                 // este video no se vuelve a reproducir en esta sesión
       clear();
-      if(status) ack(item.id, status);
+      if(status) await ack(item.id, status);             // esperamos a que la base de datos lo marque antes de releer la cola
       try { if(player) player.destroy(); } catch {}
       player = null;
       if(o.onStop) await o.onStop(item);
